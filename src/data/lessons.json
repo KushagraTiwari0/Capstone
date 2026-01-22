@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "title": "Introduction to Waste Management",
+    "category": "Waste Management",
+    "description": "Learn the basics of waste management and how to reduce, reuse, and recycle effectively.",
+    "content": "Waste management is crucial for protecting our environment. The three R's - Reduce, Reuse, and Recycle - form the foundation of effective waste management. Reducing waste means consuming less and making conscious choices. Reusing involves finding new purposes for items instead of discarding them. Recycling transforms waste materials into new products, conserving resources and energy.",
+    "duration": "15 min",
+    "difficulty": "Beginner",
+    "image": "🌱"
+  },
+  {
+    "id": 2,
+    "title": "Advanced Recycling Techniques",
+    "category": "Waste Management",
+    "description": "Deep dive into advanced recycling methods and their environmental impact.",
+    "content": "Advanced recycling techniques include mechanical recycling, chemical recycling, and biological recycling. Mechanical recycling involves sorting and processing materials physically. Chemical recycling breaks down plastics into their molecular components. Biological recycling uses microorganisms to decompose organic waste. Each method has its benefits and applications.",
+    "duration": "20 min",
+    "difficulty": "Intermediate",
+    "image": "♻️"
+  },
+  {
+    "id": 3,
+    "title": "Understanding Biodiversity",
+    "category": "Biodiversity",
+    "description": "Explore the importance of biodiversity and how different species interact in ecosystems.",
+    "content": "Biodiversity refers to the variety of life on Earth, including all species of plants, animals, and microorganisms. It's essential for ecosystem stability and provides services like pollination, water purification, and climate regulation. Biodiversity loss threatens these services and can lead to ecosystem collapse. Conservation efforts focus on protecting habitats and endangered species.",
+    "duration": "18 min",
+    "difficulty": "Beginner",
+    "image": "🦋"
+  },
+  {
+    "id": 4,
+    "title": "Ecosystem Conservation",
+    "category": "Biodiversity",
+    "description": "Learn about conservation strategies and how to protect natural habitats.",
+    "content": "Ecosystem conservation involves protecting entire habitats rather than individual species. Strategies include establishing protected areas, restoring degraded ecosystems, and promoting sustainable land use. Community involvement is crucial for successful conservation. Monitoring and research help track conservation progress and adapt strategies as needed.",
+    "duration": "22 min",
+    "difficulty": "Intermediate",
+    "image": "🌳"
+  },
+  {
+    "id": 5,
+    "title": "Solar Energy Basics",
+    "category": "Renewable Energy",
+    "description": "Introduction to solar energy and how photovoltaic systems work.",
+    "content": "Solar energy harnesses sunlight to generate electricity through photovoltaic (PV) cells. These cells convert sunlight directly into electrical energy. Solar panels can be installed on rooftops or in large solar farms. Solar energy is clean, renewable, and increasingly cost-effective. Advances in technology continue to improve efficiency and reduce costs.",
+    "duration": "16 min",
+    "difficulty": "Beginner",
+    "image": "☀️"
+  },
+  {
+    "id": 6,
+    "title": "Wind and Hydroelectric Power",
+    "category": "Renewable Energy",
+    "description": "Explore wind turbines and hydroelectric power generation.",
+    "content": "Wind energy uses turbines to convert wind motion into electricity. Wind farms can be onshore or offshore. Hydroelectric power generates electricity from flowing water, typically using dams. Both are renewable energy sources with minimal greenhouse gas emissions. They complement solar energy to provide a diverse renewable energy mix.",
+    "duration": "19 min",
+    "difficulty": "Intermediate",
+    "image": "💨"
+  }
+]
+

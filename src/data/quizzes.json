@@ -1,0 +1,195 @@
+[
+  {
+    "id": 1,
+    "title": "Waste Management Quiz",
+    "category": "Waste Management",
+    "lessonId": 1,
+    "questions": [
+      {
+        "id": 1,
+        "question": "What are the three R's of waste management?",
+        "options": [
+          "Reduce, Reuse, Recycle",
+          "Read, Write, Remember",
+          "Reduce, Reuse, Refuse",
+          "Recycle, Reuse, Reject"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": 2,
+        "question": "Which material takes the longest to decompose?",
+        "options": [
+          "Paper",
+          "Plastic",
+          "Food waste",
+          "Glass"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 3,
+        "question": "What percentage of waste can be recycled?",
+        "options": [
+          "30%",
+          "50%",
+          "75%",
+          "90%"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 4,
+        "question": "Which is NOT a benefit of recycling?",
+        "options": [
+          "Conserves natural resources",
+          "Reduces landfill space",
+          "Increases pollution",
+          "Saves energy"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 5,
+        "question": "What is composting?",
+        "options": [
+          "Burning waste",
+          "Decomposing organic waste naturally",
+          "Dumping waste in landfills",
+          "Recycling plastic"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "points": 50
+  },
+  {
+    "id": 2,
+    "title": "Biodiversity Quiz",
+    "category": "Biodiversity",
+    "lessonId": 3,
+    "questions": [
+      {
+        "id": 1,
+        "question": "What does biodiversity refer to?",
+        "options": [
+          "Only animal species",
+          "Variety of life on Earth",
+          "Only plant species",
+          "Climate patterns"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 2,
+        "question": "Why is biodiversity important?",
+        "options": [
+          "It looks nice",
+          "It provides ecosystem services",
+          "It's not important",
+          "It increases pollution"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 3,
+        "question": "What is the main cause of biodiversity loss?",
+        "options": [
+          "Natural disasters",
+          "Human activities",
+          "Animal migration",
+          "Weather changes"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 4,
+        "question": "What percentage of species are estimated to be at risk of extinction?",
+        "options": [
+          "10%",
+          "25%",
+          "50%",
+          "75%"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 5,
+        "question": "How can we protect biodiversity?",
+        "options": [
+          "Destroy habitats",
+          "Protect natural habitats",
+          "Ignore conservation",
+          "Increase pollution"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "points": 50
+  },
+  {
+    "id": 3,
+    "title": "Renewable Energy Quiz",
+    "category": "Renewable Energy",
+    "lessonId": 5,
+    "questions": [
+      {
+        "id": 1,
+        "question": "What is renewable energy?",
+        "options": [
+          "Energy that never runs out",
+          "Energy from fossil fuels",
+          "Energy that pollutes",
+          "Expensive energy"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": 2,
+        "question": "Which is NOT a renewable energy source?",
+        "options": [
+          "Solar",
+          "Wind",
+          "Coal",
+          "Hydroelectric"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 3,
+        "question": "How do solar panels work?",
+        "options": [
+          "They store sunlight",
+          "They convert sunlight to electricity",
+          "They reflect sunlight",
+          "They absorb heat only"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 4,
+        "question": "What is the main advantage of renewable energy?",
+        "options": [
+          "It's expensive",
+          "It reduces greenhouse gases",
+          "It's unreliable",
+          "It's difficult to install"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 5,
+        "question": "Which renewable source is most abundant?",
+        "options": [
+          "Wind",
+          "Solar",
+          "Geothermal",
+          "Biomass"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "points": 50
+  }
+]
+

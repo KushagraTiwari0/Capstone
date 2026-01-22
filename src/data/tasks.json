@@ -1,0 +1,105 @@
+[
+  {
+    "id": 1,
+    "title": "Plant a Tree",
+    "description": "Plant a tree in your community and document the process. Trees help reduce carbon dioxide and provide oxygen.",
+    "category": "Conservation",
+    "points": 100,
+    "difficulty": "Easy",
+    "icon": "🌳",
+    "instructions": [
+      "Choose an appropriate location for planting",
+      "Select a native tree species",
+      "Dig a hole twice the width of the root ball",
+      "Water the tree regularly",
+      "Take photos of the planting process"
+    ],
+    "verificationStatus": "pending"
+  },
+  {
+    "id": 2,
+    "title": "Waste Segregation",
+    "description": "Set up a waste segregation system at home. Separate recyclables, organic waste, and non-recyclables.",
+    "category": "Waste Management",
+    "points": 75,
+    "difficulty": "Easy",
+    "icon": "♻️",
+    "instructions": [
+      "Set up separate bins for different waste types",
+      "Label each bin clearly",
+      "Educate family members about segregation",
+      "Maintain the system for at least one week",
+      "Document with photos"
+    ],
+    "verificationStatus": "pending"
+  },
+  {
+    "id": 3,
+    "title": "Energy Audit",
+    "description": "Conduct an energy audit of your home. Identify areas where you can save energy and reduce consumption.",
+    "category": "Energy Conservation",
+    "points": 80,
+    "difficulty": "Medium",
+    "icon": "⚡",
+    "instructions": [
+      "List all electrical appliances",
+      "Check for energy-efficient alternatives",
+      "Identify phantom power usage",
+      "Create an action plan to reduce consumption",
+      "Implement at least 3 energy-saving measures"
+    ],
+    "verificationStatus": "pending"
+  },
+  {
+    "id": 4,
+    "title": "Community Cleanup",
+    "description": "Organize or participate in a community cleanup event. Remove litter from public spaces.",
+    "category": "Community Action",
+    "points": 90,
+    "difficulty": "Medium",
+    "icon": "🧹",
+    "instructions": [
+      "Choose a location that needs cleaning",
+      "Gather necessary supplies (gloves, bags)",
+      "Invite friends or neighbors to join",
+      "Safely collect and dispose of waste",
+      "Document the before and after"
+    ],
+    "verificationStatus": "pending"
+  },
+  {
+    "id": 5,
+    "title": "Composting Setup",
+    "description": "Start a composting system at home. Convert organic waste into nutrient-rich compost.",
+    "category": "Waste Management",
+    "points": 85,
+    "difficulty": "Medium",
+    "icon": "🌿",
+    "instructions": [
+      "Choose a composting method (bin, pile, or tumbler)",
+      "Set up the composting container",
+      "Add organic waste (fruit peels, vegetable scraps)",
+      "Maintain proper moisture and aeration",
+      "Monitor the composting process"
+    ],
+    "verificationStatus": "pending"
+  },
+  {
+    "id": 6,
+    "title": "Water Conservation Challenge",
+    "description": "Reduce your water consumption by 20% for one week. Track your usage and implement conservation methods.",
+    "category": "Water Conservation",
+    "points": 70,
+    "difficulty": "Easy",
+    "icon": "💧",
+    "instructions": [
+      "Measure current water usage",
+      "Identify areas of high consumption",
+      "Implement water-saving techniques",
+      "Track daily usage",
+      "Document your conservation methods"
+    ],
+    "verificationStatus": "pending"
+  }
+]
+

@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "name": "Eco Warrior",
+    "avatar": "🌱",
+    "points": 1250,
+    "badges": 8,
+    "rank": 1,
+    "level": "Expert"
+  },
+  {
+    "id": 2,
+    "name": "Green Guardian",
+    "avatar": "🌿",
+    "points": 1180,
+    "badges": 7,
+    "rank": 2,
+    "level": "Expert"
+  },
+  {
+    "id": 3,
+    "name": "Nature Lover",
+    "avatar": "🦋",
+    "points": 1100,
+    "badges": 6,
+    "rank": 3,
+    "level": "Advanced"
+  },
+  {
+    "id": 4,
+    "name": "Planet Protector",
+    "avatar": "🌍",
+    "points": 980,
+    "badges": 6,
+    "rank": 4,
+    "level": "Advanced"
+  },
+  {
+    "id": 5,
+    "name": "Eco Explorer",
+    "avatar": "🌳",
+    "points": 920,
+    "badges": 5,
+    "rank": 5,
+    "level": "Advanced"
+  },
+  {
+    "id": 6,
+    "name": "Sustainable Student",
+    "avatar": "♻️",
+    "points": 850,
+    "badges": 5,
+    "rank": 6,
+    "level": "Intermediate"
+  },
+  {
+    "id": 7,
+    "name": "Green Thinker",
+    "avatar": "🌲",
+    "points": 780,
+    "badges": 4,
+    "rank": 7,
+    "level": "Intermediate"
+  },
+  {
+    "id": 8,
+    "name": "Eco Enthusiast",
+    "avatar": "🍃",
+    "points": 720,
+    "badges": 4,
+    "rank": 8,
+    "level": "Intermediate"
+  },
+  {
+    "id": 9,
+    "name": "Nature Newbie",
+    "avatar": "🌱",
+    "points": 650,
+    "badges": 3,
+    "rank": 9,
+    "level": "Beginner"
+  },
+  {
+    "id": 10,
+    "name": "Green Starter",
+    "avatar": "🌿",
+    "points": 580,
+    "badges": 3,
+    "rank": 10,
+    "level": "Beginner"
+  }
+]
+
