@@ -36,7 +36,7 @@ const Sidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all"
+        className="lg:hidden fixed top-16 sm:top-4 left-4 z-50 p-3 rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
         aria-label="Toggle menu"
       >
         {isOpen ? (
@@ -60,7 +60,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-white to-primary-50/30 min-h-screen p-4 transform transition-transform duration-300 ease-in-out border-r border-primary-100 ${
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-white to-primary-50/30 min-h-screen p-4 transform transition-transform duration-300 ease-in-out border-r border-primary-100 shadow-lg lg:shadow-none ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >

@@ -148,17 +148,17 @@ const TeacherDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+    <div className="min-h-screen animated-bg">
+      <div className="dashboard-container">
         <Sidebar />
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <main className="dashboard-main flex-1">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold nature-gradient-text mb-2">
                 Teacher Dashboard
               </h1>
-              <p className="text-gray-600">
-                Welcome back, {user?.name}! Manage your classes and students
+              <p className="text-sm sm:text-base text-gray-600">
+                Welcome back, <span className="font-semibold text-primary-700">{user?.name}</span>! Manage your classes and students
               </p>
             </div>
 
@@ -169,61 +169,61 @@ const TeacherDashboard = () => {
             )}
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="stats-grid mb-6 sm:mb-8">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Students</p>
-                    <p className="text-3xl font-bold text-gray-800">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">Total Students</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">
                       {stats?.totalStudents ?? (loading ? "..." : 0)}
                     </p>
                   </div>
-                  <div className="text-4xl">👥</div>
+                  <div className="text-3xl sm:text-4xl">👥</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
                       Active Students
                     </p>
-                    <p className="text-3xl font-bold text-primary-600">
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-600">
                       {stats?.activeStudents ?? (loading ? "..." : 0)}
                     </p>
                   </div>
-                  <div className="text-4xl">✅</div>
+                  <div className="text-3xl sm:text-4xl">✅</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
                       Pending Reviews
                     </p>
-                    <p className="text-3xl font-bold text-yellow-600">
+                    <p className="text-2xl sm:text-3xl font-bold text-yellow-600">
                       {stats?.pendingTaskReviews ?? (loading ? "..." : 0)}
                     </p>
                   </div>
-                  <div className="text-4xl">📝</div>
+                  <div className="text-3xl sm:text-4xl">📝</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Average Score</p>
-                    <p className="text-3xl font-bold text-green-600">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">Average Score</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-600">
                       {stats?.averageScore ?? (loading ? "..." : 0)}%
                     </p>
                   </div>
-                  <div className="text-4xl">📊</div>
+                  <div className="text-3xl sm:text-4xl">📊</div>
                 </div>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="bg-white rounded-lg shadow-md mb-6">
+            <div className="eco-card mb-6">
               <div className="border-b border-gray-200">
-                <nav className="flex space-x-8 px-6" aria-label="Tabs">
+                <nav className="flex flex-wrap space-x-2 sm:space-x-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
                   {[
                     { id: "overview", label: "Overview", icon: "📊" },
                     { id: "approvals", label: "Student Approvals", icon: "👥" },
@@ -235,27 +235,27 @@ const TeacherDashboard = () => {
                     <button
                       key={tab.id}
                       onClick={() => setSelectedTab(tab.id)}
-                      className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                      className={`flex items-center space-x-1 sm:space-x-2 py-3 sm:py-4 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                         selectedTab === tab.id
-                          ? "border-primary-500 text-primary-600"
+                          ? "border-primary-600 text-primary-700"
                           : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                       }`}
                     >
-                      <span>{tab.icon}</span>
+                      <span className="text-base sm:text-lg">{tab.icon}</span>
                       <span>{tab.label}</span>
                     </button>
                   ))}
                 </nav>
               </div>
 
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {selectedTab === "overview" && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                         Quick Actions
                       </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <Link to="/analytics">
                           <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 hover:shadow-lg transition-shadow">
                             <div className="text-3xl mb-2">📈</div>
@@ -289,41 +289,41 @@ const TeacherDashboard = () => {
                     </div>
 
                     <div>
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                         Content Summary
                       </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm text-gray-600">Lessons</p>
-                              <p className="text-2xl font-bold text-gray-800">
+                              <p className="text-xs sm:text-sm text-gray-600">Lessons</p>
+                              <p className="text-xl sm:text-2xl font-bold text-gray-800">
                                 {stats?.totalLessons ?? 0}
                               </p>
                             </div>
-                            <span className="text-3xl">📚</span>
+                            <span className="text-2xl sm:text-3xl">📚</span>
                           </div>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm text-gray-600">Quizzes</p>
-                              <p className="text-2xl font-bold text-gray-800">
+                              <p className="text-xs sm:text-sm text-gray-600">Quizzes</p>
+                              <p className="text-xl sm:text-2xl font-bold text-gray-800">
                                 {stats?.totalQuizzes ?? 0}
                               </p>
                             </div>
-                            <span className="text-3xl">📝</span>
+                            <span className="text-2xl sm:text-3xl">📝</span>
                           </div>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm text-gray-600">Tasks</p>
-                              <p className="text-2xl font-bold text-gray-800">
+                              <p className="text-xs sm:text-sm text-gray-600">Tasks</p>
+                              <p className="text-xl sm:text-2xl font-bold text-gray-800">
                                 {stats?.totalTasks ?? 0}
                               </p>
                             </div>
-                            <span className="text-3xl">✅</span>
+                            <span className="text-2xl sm:text-3xl">✅</span>
                           </div>
                         </div>
                       </div>
@@ -333,15 +333,17 @@ const TeacherDashboard = () => {
 
                 {selectedTab === "approvals" && (
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                       Pending Student Approvals
                     </h2>
                     {loadingApprovals ? (
                       <div className="text-center py-8">
+                        <div className="inline-block environment-spinner w-8 h-8 mb-4"></div>
                         <p className="text-gray-600">Loading pending students...</p>
                       </div>
                     ) : pendingStudents.length === 0 ? (
-                      <div className="text-center py-8">
+                      <div className="empty-state">
+                        <div className="empty-state-icon">🌿</div>
                         <p className="text-gray-600">No pending student approvals.</p>
                       </div>
                     ) : (
@@ -349,19 +351,19 @@ const TeacherDashboard = () => {
                         {pendingStudents.map((student) => (
                           <div
                             key={student._id}
-                            className="bg-gray-50 rounded-lg p-4 flex items-center justify-between border border-gray-200"
+                            className="eco-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                           >
-                            <div className="flex items-center space-x-4">
-                              <div className="text-3xl">{student.avatar || "👤"}</div>
+                            <div className="flex items-center space-x-3 sm:space-x-4">
+                              <div className="text-2xl sm:text-3xl">{student.avatar || "👤"}</div>
                               <div>
-                                <h3 className="font-semibold text-gray-800">{student.name}</h3>
-                                <p className="text-sm text-gray-600">{student.email}</p>
+                                <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{student.name}</h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{student.email}</p>
                                 <p className="text-xs text-gray-500">
                                   Registered: {new Date(student.createdAt).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                               <Button
                                 variant="primary"
                                 size="sm"
@@ -390,98 +392,108 @@ const TeacherDashboard = () => {
 
                 {selectedTab === "students" && (
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                       Top Students
                     </h2>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Rank
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Name
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Points
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Badges
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {topUsers.map((student, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="text-xl">
-                                  {index === 0
-                                    ? "🥇"
-                                    : index === 1
-                                    ? "🥈"
-                                    : index === 2
-                                    ? "🥉"
-                                    : `#${index + 1}`}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">
-                                {student.name}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="flex items-center space-x-1">
-                                  <span>⭐</span>
-                                  <span>{student.points}</span>
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="flex items-center space-x-1">
-                                  <span>🏆</span>
-                                  <span>{student.badges ?? 0}</span>
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <Button variant="outline" size="sm">
-                                  View Details
-                                </Button>
-                              </td>
+                    {topUsers.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-state-icon">🌿</div>
+                        <p className="text-gray-600">No students found.</p>
+                      </div>
+                    ) : (
+                      <div className="table-wrapper">
+                        <table className="w-full min-w-[640px]">
+                          <thead className="bg-gradient-to-r from-primary-50 to-primary-100">
+                            <tr>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Rank
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Name
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Points
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Badges
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Actions
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {topUsers.map((student, index) => (
+                              <tr key={index} className="hover:bg-primary-50/50 transition-colors">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <span className="text-lg sm:text-xl">
+                                    {index === 0
+                                      ? "🥇"
+                                      : index === 1
+                                      ? "🥈"
+                                      : index === 2
+                                      ? "🥉"
+                                      : `#${index + 1}`}
+                                  </span>
+                                </td>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap font-semibold text-gray-800 text-sm sm:text-base">
+                                  {student.name}
+                                </td>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <span className="flex items-center space-x-1">
+                                    <span>⭐</span>
+                                    <span className="text-sm sm:text-base">{student.points}</span>
+                                  </span>
+                                </td>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <span className="flex items-center space-x-1">
+                                    <span>🏆</span>
+                                    <span className="text-sm sm:text-base">{student.badges ?? 0}</span>
+                                  </span>
+                                </td>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <Button variant="outline" size="sm">
+                                    View Details
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {selectedTab === "tasks" && (
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                       Pending Task Reviews
                     </h2>
                     <div className="space-y-4">
                       {pendingSubmissions.length === 0 ? (
-                        <div className="text-gray-600">No pending submissions.</div>
+                        <div className="empty-state">
+                          <div className="empty-state-icon">🌿</div>
+                          <p className="text-gray-600">No pending submissions.</p>
+                        </div>
                       ) : (
                         pendingSubmissions.map((submission, index) => (
                         <div
                           key={index}
-                          className="bg-gray-50 rounded-lg p-4 flex items-center justify-between"
+                          className="eco-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                         >
-                          <div className="flex items-center space-x-4">
-                            <div className="text-3xl">{submission.taskId?.icon || "✅"}</div>
+                          <div className="flex items-center space-x-3 sm:space-x-4">
+                            <div className="text-2xl sm:text-3xl">{submission.taskId?.icon || "✅"}</div>
                             <div>
-                              <h3 className="font-semibold text-gray-800">
+                              <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
                                 {submission.taskId?.title || "Task"}
                               </h3>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-xs sm:text-sm text-gray-600">
                                 Submitted by {submission.userId?.name || "Student"}
                               </p>
                             </div>
                           </div>
-                          <div className="flex space-x-2">
+                          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                             <Button variant="primary" size="sm">
                               Review
                             </Button>
@@ -498,102 +510,101 @@ const TeacherDashboard = () => {
 
                 {selectedTab === "teachers" && (
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                       Teacher Leaderboard (Teachers Only)
                     </h2>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Rank
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Teacher
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Points
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                              Level
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {teacherLeaderboard.length === 0 ? (
+                    {teacherLeaderboard.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-state-icon">🌿</div>
+                        <p className="text-gray-600">No teachers found</p>
+                      </div>
+                    ) : (
+                      <div className="table-wrapper">
+                        <table className="w-full min-w-[640px]">
+                          <thead className="bg-gradient-to-r from-primary-50 to-primary-100">
                             <tr>
-                              <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
-                                No teachers found
-                              </td>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Rank
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Teacher
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Points
+                              </th>
+                              <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                                Level
+                              </th>
                             </tr>
-                          ) : (
-                            teacherLeaderboard.map((t, idx) => (
-                              <tr key={t.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {teacherLeaderboard.map((t, idx) => (
+                              <tr key={t.id} className="hover:bg-primary-50/50 transition-colors">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap font-semibold text-sm sm:text-base">
                                   {idx + 1 <= 3 ? ["🥇", "🥈", "🥉"][idx] : `#${idx + 1}`}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap font-semibold text-gray-800">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl">{t.avatar || "👤"}</span>
-                                    <span>{t.name}</span>
+                                    <span className="text-xl sm:text-2xl">{t.avatar || "👤"}</span>
+                                    <span className="text-sm sm:text-base">{t.name}</span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                   <span className="flex items-center space-x-1">
                                     <span>⭐</span>
-                                    <span>{t.points || 0}</span>
+                                    <span className="text-sm sm:text-base">{t.points || 0}</span>
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-800">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <span className="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-800">
                                     {t.level || "Beginner"}
                                   </span>
                                 </td>
                               </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {selectedTab === "content" && (
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                       Manage Content
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-6 text-center">
-                        <div className="text-4xl mb-3">📚</div>
-                        <h3 className="font-semibold text-gray-800 mb-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100 text-center">
+                        <div className="text-3xl sm:text-4xl mb-3">📚</div>
+                        <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
                           Lessons
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-4">
                           {stats?.totalLessons ?? 0} lessons available
                         </p>
                         <Button variant="outline" size="sm">
                           Manage Lessons
                         </Button>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-6 text-center">
-                        <div className="text-4xl mb-3">📝</div>
-                        <h3 className="font-semibold text-gray-800 mb-2">
+                      <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100 text-center">
+                        <div className="text-3xl sm:text-4xl mb-3">📝</div>
+                        <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
                           Quizzes
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-4">
                           {stats?.totalQuizzes ?? 0} quizzes available
                         </p>
                         <Button variant="outline" size="sm">
                           Manage Quizzes
                         </Button>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-6 text-center">
-                        <div className="text-4xl mb-3">✅</div>
-                        <h3 className="font-semibold text-gray-800 mb-2">
+                      <div className="eco-card bg-gradient-to-br from-primary-50 to-primary-100 text-center">
+                        <div className="text-3xl sm:text-4xl mb-3">✅</div>
+                        <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
                           Tasks
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-4">
                           {stats?.totalTasks ?? 0} tasks available
                         </p>
                         <Button variant="outline" size="sm">

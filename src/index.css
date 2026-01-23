@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   GLOBAL ECO-FRIENDLY THEME SYSTEM
+   ============================================ */
+
+:root {
+  /* Primary Green Shades - Forest Inspired */
+  --primary-green: #2E7D32;
+  --primary-green-light: #43A047;
+  --primary-green-dark: #1B5E20;
+  
+  /* Secondary Green - Leaf Green / Teal */
+  --secondary-green: #66BB6A;
+  --secondary-teal: #26A69A;
+  
+  /* Accent Colors - Earth & Sky */
+  --eco-accent-earth: #8D6E63;
+  --eco-accent-sky: #4FC3F7;
+  
+  /* Background Colors */
+  --background-light: #F1F8F4;
+  --background-soft: #E8F5E9;
+  --background-white: #FFFFFF;
+  
+  /* Text Colors */
+  --text-primary: #1B5E20;
+  --text-secondary: #424242;
+  --text-light: #757575;
+  
+  /* Border & Shadow */
+  --border-soft: #C8E6C9;
+  --shadow-soft: rgba(46, 125, 50, 0.1);
+  --shadow-medium: rgba(46, 125, 50, 0.15);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -14,30 +48,31 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%);
+  background: linear-gradient(135deg, var(--background-light) 0%, var(--background-soft) 50%, var(--background-light) 100%);
   background-attachment: fixed;
+  color: var(--text-secondary);
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Eco Theme */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f0fdf4;
+  background: var(--background-soft);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(180deg, var(--primary-green-light) 0%, var(--primary-green) 100%);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+  background: linear-gradient(180deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
 }
 
 /* Environmental-themed animations */
@@ -63,10 +98,19 @@ body {
 
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 5px var(--shadow-soft);
   }
   50% {
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 30px rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 20px var(--shadow-medium), 0 0 30px var(--shadow-soft);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -87,6 +131,7 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .environment-card::before {
@@ -96,7 +141,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(46, 125, 50, 0.08), transparent);
   transition: left 0.5s;
 }
 
@@ -105,24 +150,24 @@ body {
 }
 
 .environment-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(34, 197, 94, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px var(--shadow-soft);
 }
 
 /* Nature-themed gradient text */
 .nature-gradient-text {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  background: linear-gradient(135deg, var(--primary-green-light) 0%, var(--primary-green) 50%, var(--primary-green-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Animated background pattern */
+/* Animated background pattern - Forest inspired */
 .animated-bg {
   background-image: 
-    radial-gradient(circle at 20% 50%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(22, 163, 74, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(21, 128, 61, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(46, 125, 50, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(67, 160, 71, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(38, 166, 154, 0.06) 0%, transparent 50%);
   background-size: 200% 200%;
   animation: gradient-shift 15s ease infinite;
 }
@@ -141,10 +186,156 @@ body {
 
 /* Loading spinner with environmental theme */
 .environment-spinner {
-  border: 4px solid rgba(34, 197, 94, 0.1);
-  border-top-color: #22c55e;
+  border: 4px solid rgba(46, 125, 50, 0.1);
+  border-top-color: var(--primary-green);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+/* Dashboard Layout Fixes */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-container {
+    flex-direction: row;
+  }
+}
+
+.dashboard-main {
+  width: 100%;
+  padding: 1rem;
+  margin-left: 0;
+  margin-top: 0;
+  overflow-x: hidden;
+}
+
+@media (min-width: 640px) {
+  .dashboard-main {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-main {
+    padding: 2rem;
+    margin-left: 0;
+    flex: 1;
+  }
+}
+
+/* Responsive Grid for Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .stats-grid {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Table Responsive Wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+}
+
+.table-wrapper table {
+  min-width: 100%;
+  width: max-content;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  .table-wrapper {
+    display: block;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+  
+  .table-wrapper table {
+    font-size: 0.875rem;
+  }
+  
+  .table-wrapper th,
+  .table-wrapper td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+/* Card Styles */
+.eco-card {
+  background: var(--background-white);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px var(--shadow-soft);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-soft);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .eco-card {
+    padding: 1.5rem;
+  }
+}
+
+.eco-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px var(--shadow-medium);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-light);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--background-soft) 25%, var(--background-light) 50%, var(--background-soft) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Smooth transitions */

@@ -73,176 +73,209 @@ const AnalyticsDashboard = () => {
     return roleDistribution.map((r) => ({ name: r._id, value: r.count }));
   }, [roleDistribution]);
 
-  const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
+  const COLORS = ["#43A047", "#26A69A", "#66BB6A", "#4FC3F7", "#8D6E63"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+    <div className="min-h-screen animated-bg">
+      <div className="dashboard-container">
         <Sidebar />
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <main className="dashboard-main flex-1">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold nature-gradient-text mb-2">
                 Analytics Dashboard
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Monitor student progress and platform engagement
               </p>
             </div>
 
             {/* Overall Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="stats-grid mb-6 sm:mb-8">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Students</p>
-                    <p className="text-3xl font-bold text-gray-800">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">Total Students</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800">
                       {overview?.totalStudents ?? (loading ? "..." : 0)}
                     </p>
                   </div>
-                  <div className="text-4xl">👥</div>
+                  <div className="text-3xl sm:text-4xl">👥</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
                       Active Students
                     </p>
-                    <p className="text-3xl font-bold text-primary-600">
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-600">
                       {overview?.activeStudents ?? (loading ? "..." : 0)}
                     </p>
                   </div>
-                  <div className="text-4xl">✅</div>
+                  <div className="text-3xl sm:text-4xl">✅</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Average Score</p>
-                    <p className="text-3xl font-bold text-green-600">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">Average Score</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-600">
                       {overview?.averageScore ?? (loading ? "..." : 0)}%
                     </p>
                   </div>
-                  <div className="text-4xl">📊</div>
+                  <div className="text-3xl sm:text-4xl">📊</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="eco-card environment-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
                       Completion Rate
                     </p>
-                    <p className="text-3xl font-bold text-blue-600">
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-600">
                       {overview?.completionRate ?? (loading ? "..." : 0)}%
                     </p>
                   </div>
-                  <div className="text-4xl">🎯</div>
+                  <div className="text-3xl sm:text-4xl">🎯</div>
                 </div>
               </div>
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  Top Performers (Points)
-                </h2>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topPerformersChart}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="points" fill="#22c55e" name="Points" />
-                  </BarChart>
-                </ResponsiveContainer>
+            {loading ? (
+              <div className="text-center py-12 mb-8">
+                <div className="inline-block environment-spinner w-12 h-12 mb-4"></div>
+                <p className="text-gray-600 font-medium flex items-center justify-center gap-2">
+                  <span className="animate-pulse-slow">🌿</span>
+                  Loading analytics...
+                </p>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 sm:mb-8">
+                <div className="eco-card">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
+                    Top Performers (Points)
+                  </h2>
+                  <div className="w-full" style={{ minHeight: '300px' }}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={topPerformersChart}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#C8E6C9" />
+                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="#2E7D32" />
+                        <YAxis stroke="#2E7D32" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#F1F8F4', 
+                            border: '1px solid #C8E6C9',
+                            borderRadius: '8px'
+                          }} 
+                        />
+                        <Legend />
+                        <Bar dataKey="points" fill="#43A047" name="Points" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
 
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  Users by Role
-                </h2>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={rolePieData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {rolePieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+                <div className="eco-card">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
+                    Users by Role
+                  </h2>
+                  <div className="w-full" style={{ minHeight: '300px' }}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={rolePieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {rolePieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#F1F8F4', 
+                            border: '1px solid #C8E6C9',
+                            borderRadius: '8px'
+                          }} 
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Top Performers */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <div className="eco-card">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
                 Top Performers
               </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                        Rank
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                        Student
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                        Points
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                        Badges
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {topPerformers.map((performer, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-2xl">
-                            {index === 0
-                              ? "🥇"
-                              : index === 1
-                              ? "🥈"
-                              : index === 2
-                              ? "🥉"
-                              : `#${index + 1}`}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">
-                          {performer.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="flex items-center space-x-1">
-                            <span>⭐</span>
-                            <span>{performer.points}</span>
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="flex items-center space-x-1">
-                            <span>🏆</span>
-                            <span>{performer.badges ?? 0}</span>
-                          </span>
-                        </td>
+              {topPerformers.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">🌿</div>
+                  <p className="text-gray-600">No performers found.</p>
+                </div>
+              ) : (
+                <div className="table-wrapper">
+                  <table className="w-full min-w-[640px]">
+                    <thead className="bg-gradient-to-r from-primary-50 to-primary-100">
+                      <tr>
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                          Rank
+                        </th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                          Student
+                        </th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                          Points
+                        </th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-primary-800 uppercase">
+                          Badges
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {topPerformers.map((performer, index) => (
+                        <tr key={index} className="hover:bg-primary-50/50 transition-colors">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <span className="text-lg sm:text-2xl">
+                              {index === 0
+                                ? "🥇"
+                                : index === 1
+                                ? "🥈"
+                                : index === 2
+                                ? "🥉"
+                                : `#${index + 1}`}
+                            </span>
+                          </td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap font-semibold text-gray-800 text-sm sm:text-base">
+                            {performer.name}
+                          </td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <span className="flex items-center space-x-1">
+                              <span>⭐</span>
+                              <span className="text-sm sm:text-base">{performer.points}</span>
+                            </span>
+                          </td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <span className="flex items-center space-x-1">
+                              <span>🏆</span>
+                              <span className="text-sm sm:text-base">{performer.badges ?? 0}</span>
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </main>

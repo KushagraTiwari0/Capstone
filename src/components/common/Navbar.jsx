@@ -36,9 +36,9 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-primary-100 sticky top-0 z-50">
+    <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-primary-100 sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           <Link to="/lessons" className="flex items-center space-x-2 group">
             <span className="text-3xl animate-bounce-slow group-hover:animate-spin-slow transition-transform">🌿</span>
             <span className="text-lg sm:text-xl font-bold nature-gradient-text">GEEP Platform</span>

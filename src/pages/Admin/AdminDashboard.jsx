@@ -129,10 +129,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen animated-bg">
-      <div className="flex">
+      <div className="dashboard-container">
         <Sidebar />
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="dashboard-main flex-1">
+          <div className="max-w-7xl mx-auto w-full">
             <div className="mb-8 animate-slide-down">
               <h1 className="text-4xl font-bold nature-gradient-text mb-2 flex items-center gap-3">
                 <span className="text-5xl animate-bounce-slow">👑</span>
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
 
             {/* Pending Teachers Section */}
             {pendingTeachers.length > 0 && (
-              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl shadow-lg mb-6 p-6 animate-slide-down">
+              <div className="eco-card bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-300 mb-6 animate-slide-down">
                 <h2 className="text-2xl font-bold text-yellow-800 mb-4 flex items-center gap-2">
                   <span className="text-3xl">⚠️</span>
                   Pending Teacher Approvals ({pendingTeachers.length})
@@ -198,15 +198,15 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-nature-lg border border-primary-100 environment-card">
-              <div className="p-6">
+            <div className="eco-card environment-card">
+              <div className="p-4 sm:p-6">
                 {/* Filter and Search */}
-                <div className="flex justify-between items-center mb-6 animate-slide-up">
-                  <h2 className="text-2xl font-bold nature-gradient-text flex items-center gap-2">
-                    <span className="text-3xl">👥</span>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 animate-slide-up">
+                  <h2 className="text-xl sm:text-2xl font-bold nature-gradient-text flex items-center gap-2">
+                    <span className="text-2xl sm:text-3xl">👥</span>
                     Students & Teachers
                   </h2>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button 
                       variant={filterRole === '' ? 'primary' : 'outline'}
                       size="sm"
@@ -250,30 +250,28 @@ const AdminDashboard = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
+                    <div className="table-wrapper">
+                      <table className="w-full min-w-[640px]">
                         <thead className="bg-gradient-to-r from-primary-50 to-primary-100">
                           <tr>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Avatar</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Email</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Role</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Points</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Level</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Badges</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Joined Date</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Avatar</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Name</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider hidden md:table-cell">Email</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Role</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider">Points</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider hidden lg:table-cell">Level</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider hidden lg:table-cell">Badges</th>
+                            <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-primary-800 uppercase tracking-wider hidden xl:table-cell">Joined Date</th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-primary-100">
                           {users.length === 0 ? (
                             <tr>
-                              <td colSpan="8" className="px-6 py-12 text-center">
-                                <div className="flex flex-col items-center gap-3">
-                                  <span className="text-5xl animate-bounce-slow">🌿</span>
-                                  <p className="text-gray-500 font-medium">
-                                    No {filterRole ? filterRole + 's' : 'users'} found
-                                  </p>
-                                </div>
+                              <td colSpan="8" className="px-6 py-12 text-center empty-state">
+                                <div className="empty-state-icon">🌿</div>
+                                <p className="text-gray-500 font-medium">
+                                  No {filterRole ? filterRole + 's' : 'users'} found
+                                </p>
                               </td>
                             </tr>
                           ) : (
@@ -283,19 +281,19 @@ const AdminDashboard = () => {
                                 className="environment-card hover:bg-primary-50/50 transition-all animate-slide-up"
                                 style={{ animationDelay: `${index * 30}ms` }}
                               >
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                   <div className="relative">
-                                    <span className="text-3xl animate-bounce-slow">{u.avatar || '👤'}</span>
-                                    <span className="absolute -top-1 -right-1 text-xs">🌿</span>
+                                    <span className="text-2xl sm:text-3xl animate-bounce-slow">{u.avatar || '👤'}</span>
+                                    <span className="absolute -top-1 -right-1 text-xs hidden sm:block">🌿</span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="font-bold text-gray-800">{u.name}</div>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <div className="font-bold text-gray-800 text-sm sm:text-base">{u.name}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
                                   <div className="text-sm text-gray-600">{u.email}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                   <span className={`inline-block px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${
                                     u.role === 'teacher' 
                                       ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300' 
@@ -304,26 +302,26 @@ const AdminDashboard = () => {
                                     {u.role === 'teacher' ? '👨‍🏫 Teacher' : '👨‍🎓 Student'}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center space-x-2 bg-gradient-to-r from-yellow-50 to-yellow-100 px-3 py-1.5 rounded-lg border border-yellow-200 w-fit">
-                                    <span className="text-yellow-500 animate-pulse-slow">⭐</span>
-                                    <span className="text-sm font-bold text-gray-800">{u.points || 0}</span>
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                  <div className="flex items-center space-x-1 sm:space-x-2 bg-gradient-to-r from-yellow-50 to-yellow-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-yellow-200 w-fit">
+                                    <span className="text-yellow-500 animate-pulse-slow text-sm sm:text-base">⭐</span>
+                                    <span className="text-xs sm:text-sm font-bold text-gray-800">{u.points || 0}</span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-xs font-semibold border border-primary-200">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
+                                  <span className="px-2 sm:px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-xs font-semibold border border-primary-200">
                                     {u.level || 'Beginner'}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                                   <div className="flex items-center gap-1">
-                                    <span className="text-lg">🏆</span>
-                                    <span className="text-sm font-semibold text-gray-700">
+                                    <span className="text-base sm:text-lg">🏆</span>
+                                    <span className="text-xs sm:text-sm font-semibold text-gray-700">
                                       {u.badges?.length || 0}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
+                                <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-600 font-medium hidden xl:table-cell">
                                   {formatDate(u.createdAt)}
                                 </td>
                               </tr>
@@ -335,11 +333,11 @@ const AdminDashboard = () => {
                     
                     {/* Pagination */}
                     {users.length > 0 && (
-                      <div className="mt-6 flex justify-between items-center">
+                      <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="text-sm text-gray-600">
                           Page {usersPage} of {totalPages}
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-wrap gap-2">
                           <Button 
                             variant="outline" 
                             onClick={() => {
