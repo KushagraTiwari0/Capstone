@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
   },
   classLevel: {
     type: Number,
-    min: [1, 'Class level must be at least 1'],
-    max: [8, 'Class level cannot exceed 8'],
+    min: [6, 'Class level must be at least 6'],
+    max: [10, 'Class level cannot exceed 10'],
     // Required for students and teachers, but admin does not need it. Check handled in validation or route.
   },
   status: {

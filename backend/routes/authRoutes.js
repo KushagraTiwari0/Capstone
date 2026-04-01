@@ -71,11 +71,11 @@ router.post('/register', async (req, res) => {
         });
       }
       parsedClassLevel = parseInt(classLevel, 10);
-      if (isNaN(parsedClassLevel) || parsedClassLevel < 1 || parsedClassLevel > 8) {
+      if (isNaN(parsedClassLevel) || parsedClassLevel < 6 || parsedClassLevel > 10) {
         return res.status(400).json({
           success: false,
           error: {
-            message: 'Class level must be a number between 1 and 8'
+            message: 'Class level must be a number between 6 and 10'
           }
         });
       }

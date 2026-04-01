@@ -48,10 +48,26 @@ const Register = () => {
     return () => clearTimeout(timeoutId);
   }, [formData.email]);
 
+  // const handleChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value
+  //   });
+  //   setError('');
+  //   setSuccess('');
+  // };
   const handleChange = (e) => {
+    // 🚨 Bulletproof extraction: Ensure we only get the string, NEVER the DOM node
+    let finalValue = e.target.value;
+    
+    // If somehow the value is an object (like an HTML node), grab its string value
+    if (typeof finalValue === 'object' && finalValue !== null) {
+      finalValue = finalValue.value || finalValue.toString();
+    }
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: finalValue
     });
     setError('');
     setSuccess('');
@@ -89,14 +105,19 @@ const Register = () => {
       setIsLoading(false);
       return;
     }
-
+    if (formData.role !== 'admin' && !formData.classLevel) {
+      setError('Please select your Class / Session');
+      setIsLoading(false);
+      return;
+    }
     try {
+      const cleanClassLevel = formData.classLevel ? parseInt(formData.classLevel.toString(), 10) : undefined;
       const result = await registerUser({
         name: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
-        classLevel: formData.role !== 'admin' ? formData.classLevel : undefined
+        classLevel: formData.role !== 'admin' ? (cleanClassLevel) : undefined
       });
 
       if (result.success) {
@@ -129,6 +150,7 @@ const Register = () => {
     } finally {
       setIsLoading(false);
     }
+    
   };
 
   return (
@@ -226,7 +248,7 @@ const Register = () => {
                 required
               >
                 <option value="" disabled>Select your class</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                {[6, 7, 8,9,10].map(num => (
                   <option key={num} value={num}>Class {num}</option>
                 ))}
               </select>

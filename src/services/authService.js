@@ -45,7 +45,7 @@ const apiRequest = async (endpoint, options = {}) => {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       return {
         success: false,
@@ -85,7 +85,8 @@ export const checkUserExists = async (email) => {
  */
 export const registerUser = async (userData) => {
   try {
-    const { name, email, password, role } = userData;
+    // ✅ FIX: classLevel is now properly destructured from userData
+    const { name, email, password, role, classLevel } = userData;
 
     // Validation
     if (!name || !email || !password) {
@@ -102,6 +103,11 @@ export const registerUser = async (userData) => {
       };
     }
 
+    // ✅ FIX: Ensure classLevel is always a clean number, never a DOM node or string
+    const cleanClassLevel = classLevel !== undefined && classLevel !== ''
+      ? parseInt(classLevel.toString(), 10)
+      : undefined;
+
     // Make API call to register
     const result = await apiRequest('/auth/register', {
       method: 'POST',
@@ -109,12 +115,12 @@ export const registerUser = async (userData) => {
         name: name.trim(),
         email: email.toLowerCase().trim(),
         password,
-        role: role || 'student'
+        role: role || 'student',
+        classLevel: cleanClassLevel
       })
     });
 
     if (result.success && result.token) {
-      // Store token for authenticated requests
       setToken(result.token);
       return {
         success: true,
@@ -139,7 +145,6 @@ export const registerUser = async (userData) => {
  */
 export const loginUser = async (email, password) => {
   try {
-    // Validation
     if (!email || !password) {
       return {
         success: false,
@@ -147,7 +152,6 @@ export const loginUser = async (email, password) => {
       };
     }
 
-    // Make API call to login
     const result = await apiRequest('/auth/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -157,7 +161,6 @@ export const loginUser = async (email, password) => {
     });
 
     if (result.success && result.token) {
-      // Store token for authenticated requests
       setToken(result.token);
       return {
         success: true,
@@ -214,7 +217,6 @@ export const getCurrentUser = async () => {
  */
 export const updateUserProfile = async (userId, updates) => {
   try {
-    // Make API call to update profile
     const result = await apiRequest('/users/me', {
       method: 'PUT',
       body: JSON.stringify(updates)
@@ -250,13 +252,9 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
       };
     }
 
-    // Make API call to change password
     const result = await apiRequest('/users/me/password', {
       method: 'PUT',
-      body: JSON.stringify({
-        currentPassword,
-        newPassword
-      })
+      body: JSON.stringify({ currentPassword, newPassword })
     });
 
     return result;
