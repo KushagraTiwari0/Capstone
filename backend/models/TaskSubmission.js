@@ -6,38 +6,61 @@ const taskSubmissionSchema = new mongoose.Schema({
     ref: 'Task',
     required: true
   },
-  userId: {
+  studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  image: {
-    type: String, // URL to uploaded image
-    required: true
+  proof: {
+    type: String,
+    required: true,
+    default: 'No proof provided' // ✅ Prevents validation failure on old/legacy docs
   },
   location: {
     type: String,
-    required: true
+    required: true,
+    default: 'Not provided' // ✅ Same fix
   },
   reflection: {
     type: String,
+    required: true,
+    default: 'No reflection provided' // ✅ Same fix
+  },
+  classLevel: {
+    type: Number,
     required: true
+  },
+  teacherId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   status: {
     type: String,
-    enum: ['pending', 'submitted', 'verified', 'rejected'],
+    enum: ['pending', 'approved', 'rejected'],
     default: 'pending'
+  },
+  teacherRemarks: {
+    type: String,
+    default: ''
+  },
+  rejectionReason: {
+    type: String,
+    default: ''
   },
   reviewedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  feedback: {
-    type: String
+  reviewedAt: {
+    type: Date
   },
-  pointsAwarded: {
+  awardedPoints: {
     type: Number,
     default: 0
+  },
+  submittedAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true

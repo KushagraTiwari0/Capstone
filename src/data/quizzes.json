@@ -61,7 +61,8 @@
         "correctAnswer": 1
       }
     ],
-    "points": 50
+    "points": 50,
+    "classLevel": 6
   },
   {
     "id": 2,
@@ -125,7 +126,8 @@
         "correctAnswer": 1
       }
     ],
-    "points": 50
+    "points": 50,
+    "classLevel": 6
   },
   {
     "id": 3,
@@ -189,7 +191,8 @@
         "correctAnswer": 1
       }
     ],
-    "points": 50
+    "points": 50,
+    "classLevel": 7
   }
 ]
 

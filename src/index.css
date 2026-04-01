@@ -7,33 +7,43 @@
    ============================================ */
 
 :root {
-  /* Primary Green Shades - Forest Inspired */
-  --primary-green: #2E7D32;
-  --primary-green-light: #43A047;
-  --primary-green-dark: #1B5E20;
+  /* Primary Green Shades */
+  --primary-50:  #F1F8F4;
+  --primary-100: #E8F5E9;
+  --primary-200: #C8E6C9;
+  --primary-300: #A5D6A7;
+  --primary-400: #81C784;
+  --primary-500: #66BB6A;
+  --primary-600: #43A047;
+  --primary-700: #2E7D32;
+  --primary-800: #1B5E20;
+  --primary-900: #14532D;
   
-  /* Secondary Green - Leaf Green / Teal */
-  --secondary-green: #66BB6A;
-  --secondary-teal: #26A69A;
-  
-  /* Accent Colors - Earth & Sky */
-  --eco-accent-earth: #8D6E63;
-  --eco-accent-sky: #4FC3F7;
-  
-  /* Background Colors */
+  /* Secondary Green shades */
+  --secondary-50:  #F0FDF4;
+  --secondary-100: #DCFCE7;
+  --secondary-500: #22C55E;
+  --secondary-600: #16A34A;
+  --secondary-700: #15803D;
+
+  /* Accent Colors */
+  --eco-accent: #8D6E63;
+  --eco-sky:    #4FC3F7;
+
+  /* Basic Setup */
   --background-light: #F1F8F4;
-  --background-soft: #E8F5E9;
+  --background-soft:  #E8F5E9;
   --background-white: #FFFFFF;
-  
-  /* Text Colors */
-  --text-primary: #1B5E20;
-  --text-secondary: #424242;
-  --text-light: #757575;
-  
-  /* Border & Shadow */
-  --border-soft: #C8E6C9;
-  --shadow-soft: rgba(46, 125, 50, 0.1);
+
+  /* Shadow Setup */
+  --shadow-soft:   rgba(46, 125, 50, 0.1);
   --shadow-medium: rgba(46, 125, 50, 0.15);
+  --border-soft:   #C8E6C9;
+
+  /* Text Setup */
+  --text-primary:   #1B5E20;
+  --text-secondary: #424242;
+  --text-light:     #757575;
 }
 
 * {

@@ -21,10 +21,22 @@ router.get('/', authMiddleware, async (req, res) => {
       });
     }
 
+    let userClassLevel = null;
+    let me = null;
+    if (req.userId) {
+      me = await User.findById(req.userId).select('points role status classLevel').lean();
+      if (me) userClassLevel = me.classLevel;
+    }
+
     const baseQuery = { 
       role: requestedRole,
       status: 'approved' // Only show approved users in leaderboard
     };
+    
+    // Auto-filter students by classLevel if the user belongs to a class
+    if (requestedRole === 'student' && userClassLevel && me.role !== 'admin') {
+      baseQuery.classLevel = userClassLevel;
+    }
     if (level) {
       baseQuery.level = new RegExp(`^${level}$`, 'i');
     }
@@ -51,10 +63,9 @@ router.get('/', authMiddleware, async (req, res) => {
 
     // Current user rank (among approved non-admin leaderboard users)
     let currentUserRank = null;
-    if (req.userId) {
-      const me = await User.findById(req.userId).select('points role status').lean();
+    if (req.userId && me) {
       // Only show rank if user is approved and matches requested role
-      if (me && me.role === requestedRole && (me.status === 'approved' || !me.status)) {
+      if (me.role === requestedRole && (me.status === 'approved' || !me.status)) {
         const betterCount = await User.countDocuments({
           ...baseQuery,
           points: { $gt: me.points || 0 },
@@ -99,10 +110,21 @@ router.get('/top', authMiddleware, async (req, res) => {
       });
     }
 
-    const users = await User.find({ 
+    let me = null;
+    if (req.userId) {
+      me = await User.findById(req.userId).select('classLevel role').lean();
+    }
+
+    const baseQuery = { 
       role: requestedRole,
       status: 'approved' // Only show approved users
-    })
+    };
+
+    if (requestedRole === 'student' && me && me.role !== 'admin' && me.classLevel) {
+      baseQuery.classLevel = me.classLevel;
+    }
+
+    const users = await User.find(baseQuery)
       .select('name avatar points level badges role')
       .sort({ points: -1, updatedAt: -1 })
       .limit(limitNum)

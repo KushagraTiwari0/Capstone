@@ -29,7 +29,13 @@ const taskSchema = new mongoose.Schema({
     type: String,
     default: '✅'
   },
-  createdBy: {
+  classLevel: {
+    type: Number,
+    required: [true, 'Class level is required for tasks'],
+    min: [1, 'Class level must be at least 1'],
+    max: [8, 'Class level cannot exceed 8']
+  },
+  teacherId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }

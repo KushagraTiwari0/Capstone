@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
 
+const quizQuestionSchema = new mongoose.Schema({
+  question: { type: String, required: true },
+  options: [{ type: String }],
+  correctAnswer: { type: Number, required: true } // index of correct option
+});
+
 const lessonSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -35,6 +41,18 @@ const lessonSchema = new mongoose.Schema({
   points: {
     type: Number,
     default: 50
+  },
+  classLevel: {
+    type: Number,
+    required: [true, 'Class level is required']
+  },
+  videoUrl: {
+    type: String,
+    default: ''
+  },
+  quiz: {
+    type: [quizQuestionSchema],
+    default: []
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

@@ -10,13 +10,14 @@ const router = express.Router();
 
 const teacherOrAdminMiddleware = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId).select('role');
+    const user = await User.findById(req.userId).select('role classLevel');
     if (!user || (user.role !== 'teacher' && user.role !== 'admin')) {
       return res.status(403).json({
         success: false,
         error: { message: 'Access denied. Teacher/Admin privileges required.' },
       });
     }
+    req.user = user;
     next();
   } catch (error) {
     return res.status(500).json({
@@ -29,30 +30,38 @@ const teacherOrAdminMiddleware = async (req, res, next) => {
 // GET /api/analytics/overview
 router.get('/overview', authMiddleware, teacherOrAdminMiddleware, async (req, res) => {
   try {
-    // Only count approved students
-    const totalStudents = await User.countDocuments({ 
+    const filter = {
       role: 'student',
       status: 'approved'
-    });
+    };
+    if (req.user.role === 'teacher' && req.user.classLevel) {
+      filter.classLevel = req.user.classLevel;
+    }
+
+    // Only count approved students
+    const totalStudents = await User.countDocuments(filter);
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const activeStudents = await User.countDocuments({
-      role: 'student',
-      status: 'approved',
-      updatedAt: { $gte: thirtyDaysAgo },
-    });
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const activeFilter = { ...filter, updatedAt: { $gte: thirtyDaysAgo } };
+    const activeStudents = await User.countDocuments(activeFilter);
+
+    let taskReviewFilter = { status: 'pending' };
+    if (req.user.role === 'teacher' && req.user.classLevel) {
+      taskReviewFilter.classLevel = req.user.classLevel;
+    }
 
     const [totalLessons, totalQuizzes, totalTasks, pendingTaskReviews] = await Promise.all([
-      Lesson.countDocuments(),
-      Quiz.countDocuments(),
-      Task.countDocuments(),
-      TaskSubmission.countDocuments({ status: 'pending' }),
+      Lesson.countDocuments(req.user.role === 'teacher' ? { classLevel: req.user.classLevel } : {}),
+      Quiz.countDocuments(req.user.role === 'teacher' ? { classLevel: req.user.classLevel } : {}),
+      Task.countDocuments(req.user.role === 'teacher' ? { classLevel: req.user.classLevel } : {}),
+      TaskSubmission.countDocuments(taskReviewFilter),
     ]);
 
     // Avg quiz score across approved students (percentage)
     const avgScoreAgg = await User.aggregate([
-      { $match: { role: 'student', status: 'approved' } },
+      { $match: filter },
       { $unwind: { path: '$quizScores', preserveNullAndEmptyArrays: false } },
       { $group: { _id: null, avg: { $avg: '$quizScores.percentage' } } },
     ]);
@@ -62,7 +71,7 @@ router.get('/overview', authMiddleware, teacherOrAdminMiddleware, async (req, re
     let completionRate = 0;
     if (totalLessons > 0) {
       const completionAgg = await User.aggregate([
-        { $match: { role: 'student', status: 'approved' } },
+        { $match: filter },
         {
           $project: {
             completedCount: { $size: { $ifNull: ['$completedLessons', []] } },
@@ -130,11 +139,17 @@ router.get('/top-performers', authMiddleware, teacherOrAdminMiddleware, async (r
   try {
     const limitNum = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 5));
 
-    // Only show approved students and teachers
-    const users = await User.find({ 
+    const filter = { 
       role: { $in: ['student', 'teacher'] },
       status: 'approved'
-    })
+    };
+    if (req.user.role === 'teacher' && req.user.classLevel) {
+      filter.role = 'student'; // Teachers only see top students in their class, not other teachers
+      filter.classLevel = req.user.classLevel;
+    }
+
+    // Only show approved students and teachers
+    const users = await User.find(filter)
       .select('name avatar points level badges role')
       .sort({ points: -1, updatedAt: -1 })
       .limit(limitNum)
@@ -169,10 +184,15 @@ router.get('/pending-submissions', authMiddleware, teacherOrAdminMiddleware, asy
   try {
     const limitNum = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 5));
 
+    let filter = { status: 'pending' };
+    if (req.user.role === 'teacher' && req.user.classLevel) {
+      filter.classLevel = req.user.classLevel;
+    }
+
     // Get pending submissions, but only from approved users
-    const submissions = await TaskSubmission.find({ status: 'pending' })
+    const submissions = await TaskSubmission.find(filter)
       .populate({
-        path: 'userId',
+        path: 'studentId',
         match: { 
           $or: [
             { status: 'approved' },
@@ -182,12 +202,11 @@ router.get('/pending-submissions', authMiddleware, teacherOrAdminMiddleware, asy
         select: 'name email avatar role status'
       })
       .populate('taskId', 'title description points category difficulty icon')
-      .sort({ createdAt: -1 })
-      .limit(limitNum)
+      .sort({ submittedAt: -1 })
       .lean();
 
     // Filter out submissions from null users (pending/rejected users)
-    const validSubmissions = submissions.filter(sub => sub.userId !== null);
+    const validSubmissions = submissions.filter(sub => sub.studentId !== null);
 
     res.json({ success: true, data: { submissions: validSubmissions || [] } });
   } catch (error) {

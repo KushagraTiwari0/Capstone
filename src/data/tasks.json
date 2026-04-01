@@ -14,7 +14,8 @@
       "Water the tree regularly",
       "Take photos of the planting process"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 6
   },
   {
     "id": 2,
@@ -31,7 +32,8 @@
       "Maintain the system for at least one week",
       "Document with photos"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 6
   },
   {
     "id": 3,
@@ -48,7 +50,8 @@
       "Create an action plan to reduce consumption",
       "Implement at least 3 energy-saving measures"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 6
   },
   {
     "id": 4,
@@ -65,7 +68,8 @@
       "Safely collect and dispose of waste",
       "Document the before and after"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 7
   },
   {
     "id": 5,
@@ -82,7 +86,8 @@
       "Maintain proper moisture and aeration",
       "Monitor the composting process"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 7
   },
   {
     "id": 6,
@@ -99,7 +104,8 @@
       "Track daily usage",
       "Document your conservation methods"
     ],
-    "verificationStatus": "pending"
+    "verificationStatus": "pending",
+    "classLevel": 7
   }
 ]
 

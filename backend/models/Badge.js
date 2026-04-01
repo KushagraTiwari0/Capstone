@@ -15,13 +15,21 @@ const badgeSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  // Points awarded to user when they earn this badge
   points: {
     type: Number,
     default: 0
   },
+  // What the student needs to achieve to earn this badge
   criteria: {
-    type: mongoose.Schema.Types.Mixed, // Can store various criteria
-    default: {}
+    pointsRequired:   { type: Number, default: 0 }, // min total points
+    lessonsRequired:  { type: Number, default: 0 }, // min lessons completed
+    tasksRequired:    { type: Number, default: 0 }, // min tasks completed
+  },
+  // Display order in the badges page
+  order: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

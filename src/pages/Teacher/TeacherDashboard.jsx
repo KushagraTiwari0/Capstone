@@ -17,6 +17,9 @@ const TeacherDashboard = () => {
   const [teacherLeaderboard, setTeacherLeaderboard] = useState([]);
   const [pendingStudents, setPendingStudents] = useState([]);
   const [loadingApprovals, setLoadingApprovals] = useState(false);
+  
+  const [reviewModal, setReviewModal] = useState({ isOpen: false, type: null, submissionId: null });
+  const [reviewForm, setReviewForm] = useState({ awardedPoints: 0, teacherRemarks: "", rejectionReason: "" });
 
   useEffect(() => {
     const load = async () => {
@@ -36,7 +39,7 @@ const TeacherDashboard = () => {
           fetch(`${API_BASE_URL}/analytics/top-performers?limit=5`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`${API_BASE_URL}/analytics/pending-submissions?limit=5`, {
+          fetch(`${API_BASE_URL}/teacher/pending-submissions`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -115,7 +118,6 @@ const TeacherDashboard = () => {
     loadPendingStudents();
   }, []);
 
-  // Handle student approval/rejection
   const handleStudentAction = async (studentId, action) => {
     try {
       const token = localStorage.getItem("geep_token");
@@ -147,20 +149,69 @@ const TeacherDashboard = () => {
     }
   };
 
+  const openReviewModal = (submission, type) => {
+    setReviewModal({ isOpen: true, type, submissionId: submission._id });
+    setReviewForm({
+      awardedPoints: submission.taskId?.points || 0,
+      teacherRemarks: "",
+      rejectionReason: ""
+    });
+  };
+
+  const closeReviewModal = () => {
+    setReviewModal({ isOpen: false, type: null, submissionId: null });
+  };
+
+  const handleReviewSubmission = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("geep_token");
+      if (!token) return;
+
+      const endpoint = reviewModal.type === 'approve'
+        ? `/teacher/submissions/${reviewModal.submissionId}/approve`
+        : `/teacher/submissions/${reviewModal.submissionId}/reject`;
+
+      const payload = reviewModal.type === 'approve'
+        ? { awardedPoints: reviewForm.awardedPoints, teacherRemarks: reviewForm.teacherRemarks }
+        : { rejectionReason: reviewForm.rejectionReason };
+
+      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert(`Submission ${reviewModal.type === 'approve' ? 'approved' : 'rejected'} successfully.`);
+        setPendingSubmissions(prev => prev.filter(sub => sub._id !== reviewModal.submissionId));
+        closeReviewModal();
+      } else {
+        alert(data.error?.message || "Action failed.");
+      }
+    } catch (err) {
+      console.error("Review action error:", err);
+      alert("Error processing review.");
+    }
+  };
+
   return (
-    <div className="min-h-screen animated-bg">
-      <div className="dashboard-container">
-        <Sidebar />
-        <main className="dashboard-main flex-1">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="mb-6 sm:mb-8">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold nature-gradient-text mb-2">
-                Teacher Dashboard
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600">
-                Welcome back, <span className="font-semibold text-primary-700">{user?.name}</span>! Manage your classes and students
-              </p>
-            </div>
+    <div className="flex flex-col lg:flex-row w-full min-h-screen animated-bg">
+      <Sidebar />
+      <div className="flex-1 w-full p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto w-full space-y-6">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+              Teacher Dashboard
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              Welcome back, <span className="font-semibold text-primary-700">{user?.name}</span>! Manage your classes and students
+            </p>
+          </div>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
@@ -229,6 +280,7 @@ const TeacherDashboard = () => {
                     { id: "approvals", label: "Student Approvals", icon: "👥" },
                     { id: "students", label: "Students", icon: "👥" },
                     { id: "tasks", label: "Task Reviews", icon: "✅" },
+                    { id: "create-task", label: "Create Task", icon: "➕" },
                     { id: "teachers", label: "Teacher Leaderboard", icon: "🏆" },
                     { id: "content", label: "Content", icon: "📚" },
                   ].map((tab) => (
@@ -480,31 +532,144 @@ const TeacherDashboard = () => {
                         pendingSubmissions.map((submission, index) => (
                         <div
                           key={index}
-                          className="eco-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                          className="eco-card p-4 flex flex-col gap-4 text-sm sm:text-base border border-gray-100"
                         >
-                          <div className="flex items-center space-x-3 sm:space-x-4">
-                            <div className="text-2xl sm:text-3xl">{submission.taskId?.icon || "✅"}</div>
-                            <div>
-                              <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                                {submission.taskId?.title || "Task"}
-                              </h3>
-                              <p className="text-xs sm:text-sm text-gray-600">
-                                Submitted by {submission.userId?.name || "Student"}
-                              </p>
+                          <div className="flex items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                            <div className="flex items-center space-x-3 sm:space-x-4">
+                              <div className="text-2xl flex-shrink-0 bg-primary-50 w-12 h-12 rounded-full flex items-center justify-center">
+                                {submission.taskId?.icon || "✅"}
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-gray-800">
+                                  {submission.taskId?.title || "Task"}
+                                </h3>
+                                <p className="text-gray-600">
+                                  By <span className="font-medium text-gray-700">{submission.studentId?.name || "Student"}</span> on {new Date(submission.submittedAt || submission.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2 shrink-0">
+                               <Button variant="primary" size="sm" onClick={() => openReviewModal(submission, 'approve')}>
+                                 ✓ Approve
+                               </Button>
+                               <Button variant="outline" size="sm" onClick={() => openReviewModal(submission, 'reject')}>
+                                 ✗ Reject
+                               </Button>
                             </div>
                           </div>
-                          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                            <Button variant="primary" size="sm">
-                              Review
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              View All
-                            </Button>
+                          
+                          <div className="text-gray-700 bg-gray-50 rounded-lg p-4 grid gap-3">
+                            <div>
+                               <p className="font-semibold text-gray-800 mb-1">Reflection:</p>
+                               <p className="italic bg-white p-3 rounded shadow-sm">"{submission.reflection}"</p>
+                            </div>
+                            <div>
+                               <p className="font-semibold text-gray-800 mb-1">Proof:</p>
+                               <p className="bg-white p-3 rounded shadow-sm">
+                                 {submission.proof && (submission.proof.startsWith('http') ? (
+                                   <a href={submission.proof} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline break-all">
+                                     {submission.proof}
+                                   </a>
+                                 ) : (
+                                   <span className="break-words whitespace-pre-line">{submission.proof}</span>
+                                 ))}
+                               </p>
+                            </div>
+                            <div>
+                               <p className="font-semibold text-gray-800 mb-1">Location:</p>
+                               <p className="bg-white px-3 py-2 rounded shadow-sm">{submission.location}</p>
+                            </div>
                           </div>
                         </div>
                       ))
                       )}
                     </div>
+                  </div>
+                )}
+
+                {selectedTab === "create-task" && (
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
+                      Create Eco Task
+                    </h2>
+                    <form 
+                      className="eco-card space-y-4"
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const taskData = {
+                          title: formData.get('title'),
+                          description: formData.get('description'),
+                          category: formData.get('category'),
+                          difficulty: formData.get('difficulty'),
+                          points: formData.get('points'),
+                          icon: formData.get('icon') || '✅',
+                        };
+                        try {
+                          const token = localStorage.getItem("geep_token");
+                          const res = await fetch(`${API_BASE_URL}/tasks`, {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify(taskData)
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            alert('Task created successfully');
+                            e.target.reset();
+                            setSelectedTab("overview");
+                          } else {
+                            alert(data.error?.message || 'Failed to create task');
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          alert('Error creating task');
+                        }
+                      }}
+                    >
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                        <input name="title" required className="w-full px-4 py-2 border rounded-lg" placeholder="e.g., Plant a Tree" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea name="description" required rows="3" className="w-full px-4 py-2 border rounded-lg" placeholder="Describe the task..."></textarea>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                          <input name="category" required className="w-full px-4 py-2 border rounded-lg" placeholder="e.g., Planting" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                          <select name="difficulty" className="w-full px-4 py-2 border rounded-lg">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Points</label>
+                          <input name="points" type="number" required min="10" defaultValue="50" className="w-full px-4 py-2 border rounded-lg" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                          <select name="icon" defaultValue="🌱" className="w-full px-4 py-2 border rounded-lg">
+                            <option value="🌱">🌱 Seedling</option>
+                            <option value="🌳">🌳 Tree</option>
+                            <option value="♻️">♻️ Recycle</option>
+                            <option value="🌍">🌍 Earth</option>
+                            <option value="🌿">🌿 Herb</option>
+                            <option value="✅">✅ Check</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="pt-4">
+                        <Button type="submit" variant="primary">Create Task</Button>
+                      </div>
+                    </form>
                   </div>
                 )}
 
@@ -616,9 +781,73 @@ const TeacherDashboard = () => {
                 )}
               </div>
             </div>
-          </div>
-        </main>
+        </div>
       </div>
+      
+      {reviewModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+             <div className="p-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {reviewModal.type === 'approve' ? 'Approve Task' : 'Reject Task'}
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  {reviewModal.type === 'approve' ? 'Award points and provide optional remarks.' : 'Provide a reason for rejecting this submission.'}
+                </p>
+                
+                <form onSubmit={handleReviewSubmission} className="space-y-4">
+                  {reviewModal.type === 'approve' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Points to Award</label>
+                        <input
+                          type="number"
+                          required
+                          min="1"
+                          value={reviewForm.awardedPoints}
+                          onChange={(e) => setReviewForm({...reviewForm, awardedPoints: e.target.value})}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Teacher Remarks (Optional)</label>
+                        <textarea
+                          rows="3"
+                          value={reviewForm.teacherRemarks}
+                          onChange={(e) => setReviewForm({...reviewForm, teacherRemarks: e.target.value})}
+                          placeholder="e.g., Excellent work!"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                    </>
+                  )}
+                  {reviewModal.type === 'reject' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Rejection Reason</label>
+                      <textarea
+                        required
+                        rows="3"
+                        value={reviewForm.rejectionReason}
+                        onChange={(e) => setReviewForm({...reviewForm, rejectionReason: e.target.value})}
+                        placeholder="e.g., The proof image is unclear."
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-4">
+                    <Button type="button" variant="outline" className="flex-1" onClick={closeReviewModal}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" variant="primary" className="flex-1">
+                      {reviewModal.type === 'approve' ? 'Approve' : 'Reject'}
+                    </Button>
+                  </div>
+                </form>
+             </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 };

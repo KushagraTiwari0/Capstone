@@ -13,6 +13,8 @@ import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import AnalyticsDashboard from "./pages/Teacher/AnalyticsDashboard";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import CreateLesson from "./pages/Admin/CreateLesson";
+import EditLesson from "./pages/Admin/EditLesson";
 import Profile from "./pages/User/Profile";
 import NotFound from "./pages/NotFound";
 import App from "./App";
@@ -82,6 +84,14 @@ export const router = createBrowserRouter(
         {
           path: "admin",
           element: <AdminDashboard />,
+        },
+        {
+          path: "admin/lessons/create",
+          element: <CreateLesson />,
+        },
+        {
+          path: "admin/lessons/edit/:id",
+          element: <EditLesson />,
         },
         {
           path: "profile",

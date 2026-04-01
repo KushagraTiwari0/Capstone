@@ -7,14 +7,14 @@ const Button = ({
   type = 'button',
   className = ''
 }) => {
-  const baseStyles = 'font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:transform-none';
+  const baseStyles = 'font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-sm hover:shadow-nature disabled:transform-none';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500 shadow-primary/20 hover:shadow-primary/30',
-    secondary: 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 focus:ring-gray-500',
-    success: 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-500 shadow-primary/20 hover:shadow-primary/30',
-    danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-500 shadow-red-500/20 hover:shadow-red-500/30',
-    outline: 'border-2 border-primary-600 text-primary-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-primary-100 focus:ring-primary-500 bg-white hover:border-primary-700'
+    primary: 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-500 shadow-nature hover:shadow-nature-lg',
+    secondary: 'bg-gradient-to-r from-secondary-50 to-secondary-100 text-primary-800 hover:from-secondary-100 hover:to-primary-200 border border-secondary-500 focus:ring-secondary-500',
+    success: 'bg-gradient-to-r from-primary-400 to-primary-500 text-white hover:from-primary-500 hover:to-primary-600 focus:ring-primary-400 shadow-nature hover:shadow-nature-lg',
+    danger: 'bg-gradient-to-r from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 focus:ring-red-400 shadow-md hover:shadow-lg',
+    outline: 'border-2 border-primary-500 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 bg-transparent hover:border-primary-600'
   };
   
   const sizes = {

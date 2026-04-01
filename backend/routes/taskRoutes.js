@@ -4,160 +4,154 @@ import Task from '../models/Task.js';
 import Badge from '../models/Badge.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 import { sendEmail } from '../utils/emailService.js';
+import { checkAndAwardBadges } from './badgeRoutes.js';
 
 const router = express.Router();
 
-// Complete a task
+// Get tasks filtered by classLevel (for both Students and Teachers)
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: { message: 'User not found' } });
+    }
+
+    // Admins see all tasks natively, others see their classLevel tasks
+    const query = {};
+    if (user.role !== 'admin' && user.classLevel) {
+      query.classLevel = user.classLevel;
+    }
+
+    const tasks = await Task.find(query).sort({ createdAt: -1 });
+
+    res.json({ success: true, data: { tasks } });
+  } catch (error) {
+    console.error('Get tasks error:', error);
+    res.status(500).json({ success: false, error: { message: 'An error occurred while fetching tasks' } });
+  }
+});
+
+// Get a single task by ID
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ success: false, error: { message: 'Task not found' } });
+    }
+    res.json({ success: true, data: { task } });
+  } catch (error) {
+    console.error('Get task error:', error);
+    res.status(500).json({ success: false, error: { message: 'An error occurred while fetching the task' } });
+  }
+});
+
+// Create a new task (Teacher only)
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.role !== 'teacher') {
+      return res.status(403).json({ success: false, error: { message: 'Only teachers can create tasks' } });
+    }
+
+    const { title, description, category, difficulty, points, icon } = req.body;
+
+    if (!title || !description || !points || !category) {
+      return res.status(400).json({ success: false, error: { message: 'Title, description, category, and points are required' } });
+    }
+
+    const task = new Task({
+      title,
+      description,
+      category,
+      difficulty: difficulty || 'Medium',
+      points: Number(points),
+      icon: icon || '✅',
+      classLevel: user.classLevel,
+      teacherId: user._id
+    });
+
+    await task.save();
+
+    res.status(201).json({ success: true, data: { task } });
+  } catch (error) {
+    console.error('Create task error:', error);
+    res.status(500).json({ success: false, error: { message: 'An error occurred while creating the task' } });
+  }
+});
+
+// Submit a task for review
 router.post('/complete', authMiddleware, async (req, res) => {
   try {
     const { taskId, taskData } = req.body;
 
+    const proof      = (taskData?.proof      ?? req.body.proof)      || '';
+    const location   = (taskData?.location   ?? req.body.location)   || 'Not provided';
+    const reflection = (taskData?.reflection ?? req.body.reflection) || 'No reflection provided';
+
     if (!taskId && !taskData) {
       return res.status(400).json({
         success: false,
-        error: {
-          message: 'Task ID or task data is required'
-        }
+        error: { message: 'Task ID or task data is required' }
       });
     }
 
-    // Find user
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({
+    if (!proof || proof.trim() === '') {
+      return res.status(400).json({
         success: false,
-        error: {
-          message: 'User not found'
-        }
+        error: { message: 'Proof of task completion is required' }
       });
     }
 
     let task = null;
-    let taskPoints = 0;
-    let taskTitle = '';
-    let taskDescription = '';
-    let taskCategory = '';
-    let taskDifficulty = '';
-    let taskIcon = '✅';
-
-    // If taskId is provided, try to find task in database
     if (taskId) {
-      // Check if task already completed (using string comparison for both ObjectId and numeric IDs)
-      const taskIdStr = taskId.toString();
-      const isCompleted = user.completedTasks.some(completedId => 
-        completedId.toString() === taskIdStr
-      );
-
-      if (isCompleted) {
-        return res.status(400).json({
+      task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({
           success: false,
-          error: {
-            message: 'Task already completed'
-          }
+          error: { message: 'Task not found' }
         });
       }
-
-      // Try to find task in database
-      task = await Task.findById(taskId);
-      if (task) {
-        taskPoints = task.points || 0;
-        taskTitle = task.title;
-        taskDescription = task.description;
-        taskCategory = task.category;
-        taskDifficulty = task.difficulty;
-        taskIcon = task.icon || '✅';
-        // Add task to completed tasks
-        user.completedTasks.push(taskId);
-      }
     }
 
-    // If task not found in DB but taskData provided, use taskData
-    if (!task && taskData) {
-      taskPoints = taskData.points || 0;
-      taskTitle = taskData.title || 'Task';
-      taskDescription = taskData.description || '';
-      taskCategory = taskData.category || 'General';
-      taskDifficulty = taskData.difficulty || 'Easy';
-      taskIcon = taskData.icon || '✅';
-      
-      // For JSON-based tasks, store the task ID as a string/number
-      if (taskId) {
-        // Check if already completed
-        const taskIdStr = taskId.toString();
-        const isCompleted = user.completedTasks.some(completedId => 
-          completedId.toString() === taskIdStr
-        );
-
-        if (isCompleted) {
-          return res.status(400).json({
-            success: false,
-            error: {
-              message: 'Task already completed'
-            }
-          });
-        }
-        
-        // Store taskId (could be numeric from JSON)
-        user.completedTasks.push(taskId);
-      }
-    }
-
-    if (!task && !taskData) {
-      return res.status(400).json({
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        error: {
-          message: 'Task information is required'
-        }
+        error: { message: 'User not found' }
       });
     }
 
-    // Add points
-    user.points = (user.points || 0) + taskPoints;
-    
-    // Update level based on points
-    if (user.points >= 1000) {
-      user.level = 'Expert';
-    } else if (user.points >= 500) {
-      user.level = 'Advanced';
-    } else if (user.points >= 200) {
-      user.level = 'Intermediate';
-    } else {
-      user.level = 'Beginner';
-    }
+    const { default: TaskSubmission } = await import('../models/TaskSubmission.js');
 
-    await user.save();
+    console.log("Task submission received:", req.body);
 
-    // Send task completion email (don't wait for it to complete)
-    sendEmail(user.email, 'taskCompletion', {
-      ...user.toObject(),
-      task: {
-        title: taskTitle,
-        description: taskDescription,
-        category: taskCategory,
-        difficulty: taskDifficulty,
-        points: taskPoints,
-        icon: taskIcon
-      }
-    }).catch(err => {
-      console.error('Failed to send task completion email:', err);
+    const submission = new TaskSubmission({
+      studentId:    req.userId,
+      taskId:       taskId,
+      proof:        proof,
+      location:     location,
+      reflection:   reflection,
+      classLevel:   user.classLevel || 6,
+      status:       'pending',
+      awardedPoints: 0,
+      submittedAt:  new Date()
     });
 
-    res.json({
+    console.log("Saving submission:", submission);
+    await submission.save();
+
+    res.status(201).json({
       success: true,
-      message: 'Task completed successfully!',
-      data: {
-        points: user.points,
-        level: user.level,
-        completedTasks: user.completedTasks
-      }
+      message: 'Task submitted successfully',
+      submission
     });
+
   } catch (error) {
-    console.error('Complete task error:', error);
+    console.error("Submit task error:", error);
     res.status(500).json({
       success: false,
-      error: {
-        message: error.message || 'An error occurred while completing the task'
-      }
+      message: 'Task submission failed',
+      error: { message: error.message || 'An error occurred while submitting the task' }
     });
   }
 });
@@ -170,20 +164,15 @@ router.post('/badge', authMiddleware, async (req, res) => {
     if (!badgeId && !badgeData) {
       return res.status(400).json({
         success: false,
-        error: {
-          message: 'Badge ID or badge data is required'
-        }
+        error: { message: 'Badge ID or badge data is required' }
       });
     }
 
-    // Find user
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: {
-          message: 'User not found'
-        }
+        error: { message: 'User not found' }
       });
     }
 
@@ -193,9 +182,7 @@ router.post('/badge', authMiddleware, async (req, res) => {
     let badgeIcon = '🏆';
     let badgePoints = 0;
 
-    // If badgeId is provided, try to find badge in database
     if (badgeId) {
-      // Check if badge already earned
       const badgeIdStr = badgeId.toString();
       const alreadyEarned = user.badges.some(
         b => b.badgeId && b.badgeId.toString() === badgeIdStr
@@ -204,20 +191,16 @@ router.post('/badge', authMiddleware, async (req, res) => {
       if (alreadyEarned) {
         return res.status(400).json({
           success: false,
-          error: {
-            message: 'Badge already earned'
-          }
+          error: { message: 'Badge already earned' }
         });
       }
 
-      // Try to find badge in database
       badge = await Badge.findById(badgeId);
       if (badge) {
         badgeName = badge.name;
         badgeDescription = badge.description;
         badgeIcon = badge.icon || '🏆';
         badgePoints = badge.points || 0;
-        // Add badge to user
         user.badges.push({
           badgeId: badgeId,
           earnedAt: new Date()
@@ -225,16 +208,13 @@ router.post('/badge', authMiddleware, async (req, res) => {
       }
     }
 
-    // If badge not found in DB but badgeData provided, use badgeData
     if (!badge && badgeData) {
-      badgeName = badgeData.name || 'Achievement';
+      badgeName        = badgeData.name        || 'Achievement';
       badgeDescription = badgeData.description || 'Well done!';
-      badgeIcon = badgeData.icon || '🏆';
-      badgePoints = badgeData.points || 0;
-      
-      // For JSON-based badges, store the badge ID as a string/number
+      badgeIcon        = badgeData.icon        || '🏆';
+      badgePoints      = badgeData.points      || 0;
+
       if (badgeId) {
-        // Check if already earned
         const badgeIdStr = badgeId.toString();
         const alreadyEarned = user.badges.some(
           b => b.badgeId && b.badgeId.toString() === badgeIdStr
@@ -243,13 +223,10 @@ router.post('/badge', authMiddleware, async (req, res) => {
         if (alreadyEarned) {
           return res.status(400).json({
             success: false,
-            error: {
-              message: 'Badge already earned'
-            }
+            error: { message: 'Badge already earned' }
           });
         }
-        
-        // Store badgeId (could be numeric from JSON)
+
         user.badges.push({
           badgeId: badgeId,
           earnedAt: new Date()
@@ -260,18 +237,14 @@ router.post('/badge', authMiddleware, async (req, res) => {
     if (!badge && !badgeData) {
       return res.status(400).json({
         success: false,
-        error: {
-          message: 'Badge information is required'
-        }
+        error: { message: 'Badge information is required' }
       });
     }
 
-    // Add badge points if any
     if (badgePoints > 0) {
       user.points = (user.points || 0) + badgePoints;
     }
 
-    // Update level based on points
     if (user.points >= 1000) {
       user.level = 'Expert';
     } else if (user.points >= 500) {
@@ -284,14 +257,16 @@ router.post('/badge', authMiddleware, async (req, res) => {
 
     await user.save();
 
-    // Send achievement email (don't wait for it to complete)
+    // ✅ Auto-check and award any newly unlocked badges
+    await checkAndAwardBadges(req.userId);
+
     sendEmail(user.email, 'achievement', {
       ...user.toObject(),
       badge: {
-        name: badgeName,
+        name:        badgeName,
         description: badgeDescription,
-        icon: badgeIcon,
-        points: badgePoints
+        icon:        badgeIcon,
+        points:      badgePoints
       }
     }).catch(err => {
       console.error('Failed to send achievement email:', err);
@@ -302,7 +277,7 @@ router.post('/badge', authMiddleware, async (req, res) => {
       message: 'Badge earned successfully!',
       data: {
         points: user.points,
-        level: user.level,
+        level:  user.level,
         badges: user.badges
       }
     });
@@ -310,9 +285,7 @@ router.post('/badge', authMiddleware, async (req, res) => {
     console.error('Award badge error:', error);
     res.status(500).json({
       success: false,
-      error: {
-        message: error.message || 'An error occurred while awarding the badge'
-      }
+      error: { message: error.message || 'An error occurred while awarding the badge' }
     });
   }
 });

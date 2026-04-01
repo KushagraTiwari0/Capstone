@@ -35,67 +35,89 @@ const Navbar = () => {
     );
   }
 
+  const isStudent = user.role === 'student';
+  const isTeacher = user.role === 'teacher';
+  const isAdmin   = user.role === 'admin';
+
+  const navLink = (to, label, onClick) => (
+    <Link
+      to={to}
+      onClick={onClick}
+      className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group"
+    >
+      {label}
+      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300" />
+    </Link>
+  );
+
+  const mobileLink = (to, label) => (
+    <Link
+      to={to}
+      onClick={() => setIsMenuOpen(false)}
+      className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
+    >
+      {label}
+    </Link>
+  );
+
   return (
-    <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-primary-100 sticky top-0 z-50 transition-all duration-300">
+    <nav className="bg-white/95 backdrop-blur-md shadow-md border-b border-primary-200 fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16">
-          <Link to="/lessons" className="flex items-center space-x-2 group">
+
+          {/* Logo — students go to /lessons, teachers to /teacher, admin to /admin */}
+          <Link
+            to={isAdmin ? '/admin' : isTeacher ? '/teacher' : '/lessons'}
+            className="flex items-center space-x-2 group"
+          >
             <span className="text-3xl animate-bounce-slow group-hover:animate-spin-slow transition-transform">🌿</span>
-            <span className="text-lg sm:text-xl font-bold nature-gradient-text">GEEP Platform</span>
+            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              GEEP Platform
+            </span>
           </Link>
-          
-          {/* Desktop Navigation */}
+
+          {/* ── Desktop Nav ── */}
           <div className="hidden lg:flex items-center space-x-6">
-            {user.role !== 'admin' && (
+
+            {/* Points badge — students only */}
+            {isStudent && (
               <div className="flex items-center space-x-2 bg-gradient-to-r from-yellow-50 to-yellow-100 px-4 py-2 rounded-full border border-yellow-200 shadow-sm">
                 <span className="text-yellow-500 text-xl animate-pulse-slow">⭐</span>
                 <span className="font-bold text-gray-800">{points}</span>
                 <span className="text-xs text-gray-600 font-medium">pts</span>
               </div>
             )}
+
             <div className="flex items-center space-x-2">
-              {user.role !== 'admin' && (
+
+              {/* ✅ Student-only links */}
+              {isStudent && (
                 <>
-                  <Link to="/lessons" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    📚 Lessons
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                  <Link to="/tasks" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    ✅ Tasks
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                  <Link to="/badges" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    🏆 Badges
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                  <Link to="/leaderboard" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    📊 Leaderboard
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
+                  {navLink('/lessons', '📚 Lessons')}
+                  {navLink('/tasks',   '✅ Tasks')}
+                  
+                  {navLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
-              {user.role === 'teacher' && (
+
+              {/* ✅ Teacher-only links — NO Lessons, NO Tasks */}
+              {isTeacher && (
                 <>
-                  <Link to="/teacher" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    👨‍🏫 Teacher
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                  <Link to="/analytics" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                    📈 Analytics
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                  </Link>
+                  {navLink('/teacher',     '👨‍🏫 Teacher')}
+                  {navLink('/analytics',   '📈 Analytics')}
+                  
+                  {navLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
-              {user.role === 'admin' && (
-                <Link to="/admin" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                  👑 Admin
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-                </Link>
+
+              {/* ✅ Admin-only links */}
+              {isAdmin && (
+                navLink('/admin', '👑 Admin')
               )}
-              <Link to="/profile" className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:bg-primary-50 hover:scale-105 relative group">
-                👤 Profile
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-              </Link>
+
+              {/* Profile — everyone */}
+              {navLink('/profile', '👤 Profile')}
+
               <div className="flex items-center space-x-2 ml-2 pl-2 border-l border-gray-200">
                 <span className="text-gray-700 text-sm font-medium">{user.name}</span>
                 <button
@@ -108,9 +130,9 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* ── Mobile top bar ── */}
           <div className="lg:hidden flex items-center space-x-2">
-            {user.role !== 'admin' && (
+            {isStudent && (
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <span className="text-yellow-500 text-lg sm:text-xl">⭐</span>
                 <span className="font-semibold text-gray-700 text-sm sm:text-base">{points}</span>
@@ -134,51 +156,40 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* ── Mobile Dropdown ── */}
         {isMenuOpen && (
           <div className="lg:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-2 px-4">
-              {user.role !== 'admin' && (
+
+              {/* ✅ Student-only */}
+              {isStudent && (
                 <>
-                  <Link to="/lessons" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Lessons
-                  </Link>
-                  <Link to="/tasks" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Tasks
-                  </Link>
-                  <Link to="/badges" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Badges
-                  </Link>
-                  <Link to="/leaderboard" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Leaderboard
-                  </Link>
+                  {mobileLink('/lessons',     '📚 Lessons')}
+                  {mobileLink('/tasks',       '✅ Tasks')}
+                  {mobileLink('/badges',      '🏆 Badges')}
+                  {mobileLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
-              {user.role === 'teacher' && (
+
+              {/* ✅ Teacher-only — NO Lessons, NO Tasks, NO Badges, NO Points */}
+              {isTeacher && (
                 <>
-                  <Link to="/teacher" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Teacher
-                  </Link>
-                  <Link to="/analytics" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                    Analytics
-                  </Link>
+                  {mobileLink('/teacher',     '👨‍🏫 Teacher')}
+                  {mobileLink('/analytics',   '📈 Analytics')}
+                  {mobileLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
-              {user.role === 'admin' && (
-                <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Admin
-                </Link>
-              )}
-              <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
-                Profile
-              </Link>
+
+              {/* ✅ Admin-only */}
+              {isAdmin && mobileLink('/admin', '👑 Admin')}
+
+              {/* Profile — everyone */}
+              {mobileLink('/profile', '👤 Profile')}
+
               <div className="pt-2 border-t border-gray-200">
                 <div className="px-3 py-2 text-sm text-gray-600">{user.name}</div>
                 <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
+                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                   className="w-full text-left text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Logout
@@ -193,4 +204,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

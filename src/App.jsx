@@ -63,13 +63,20 @@ const AppContent = () => {
     return <Navigate to="/lessons" replace />;
   }
 
+  // Block teachers from accessing /tasks
+  if (pathname.startsWith("/tasks") && user?.role === "teacher") {
+    return <Navigate to="/teacher" replace />;
+  }
+
   // Show navbar only if authenticated and not on auth pages
   if (user && !isAuthRoute) {
     return (
-      <>
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
-        <Outlet />
-      </>
+        <main className="flex-1 overflow-x-hidden relative flex flex-col pt-14 sm:pt-16">
+          <Outlet />
+        </main>
+      </div>
     );
   }
 

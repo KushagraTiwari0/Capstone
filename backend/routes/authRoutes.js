@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, classLevel } = req.body;
 
     // Validation
     if (!name || !email || !password) {
@@ -52,12 +52,33 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Auto-detect role from email if not provided
     let finalRole = role || 'student';
     if (email.includes('admin')) {
       finalRole = 'admin';
     } else if (email.includes('teacher')) {
       finalRole = 'teacher';
+    }
+    
+    // Validate classLevel for students and teachers
+    let parsedClassLevel = undefined;
+    if (finalRole !== 'admin') {
+      if (!classLevel) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            message: 'Class level is required for students and teachers'
+          }
+        });
+      }
+      parsedClassLevel = parseInt(classLevel, 10);
+      if (isNaN(parsedClassLevel) || parsedClassLevel < 1 || parsedClassLevel > 8) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            message: 'Class level must be a number between 1 and 8'
+          }
+        });
+      }
     }
 
     // Set status: admins are auto-approved, others are pending
@@ -69,6 +90,7 @@ router.post('/register', async (req, res) => {
       email: email.toLowerCase().trim(),
       password,
       role: finalRole,
+      classLevel: parsedClassLevel,
       status: status,
       avatar: finalRole === 'admin' ? '👑' : finalRole === 'teacher' ? '👨‍🏫' : '👤'
     });
@@ -91,7 +113,7 @@ router.post('/register', async (req, res) => {
     let token = null;
     if (user.status === 'approved') {
       token = jwt.sign(
-        { userId: user._id, role: user.role },
+        { userId: user._id, role: user.role, classLevel: user.classLevel },
         process.env.JWT_SECRET || 'your-secret-key',
         { expiresIn: '7d' }
       );
@@ -224,7 +246,7 @@ router.post('/login', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, role: user.role, classLevel: user.classLevel },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
     );

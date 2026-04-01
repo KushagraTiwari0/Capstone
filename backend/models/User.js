@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'teacher', 'admin'],
     default: 'student'
   },
+  classLevel: {
+    type: Number,
+    min: [1, 'Class level must be at least 1'],
+    max: [8, 'Class level cannot exceed 8'],
+    // Required for students and teachers, but admin does not need it. Check handled in validation or route.
+  },
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],
@@ -63,8 +69,7 @@ const userSchema = new mongoose.Schema({
     }
   }],
   completedLessons: [{
-    type: mongoose.Schema.Types.Mixed, // Can be ObjectId or numeric ID from JSON
-    ref: 'Lesson'
+    type: mongoose.Schema.Types.Mixed // Can be ObjectId or numeric ID from JSON
   }],
   completedTasks: [{
     type: mongoose.Schema.Types.Mixed, // Can be ObjectId or numeric ID from JSON

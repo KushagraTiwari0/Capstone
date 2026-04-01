@@ -72,19 +72,18 @@ const Profile = () => {
   const avatars = ["👤", "👨", "👩", "🧑", "👨‍🎓", "👩‍🎓", "🌿", "🌱"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-6 sm:mb-8">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
-                My Profile
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600">
-                Manage your account information and preferences
-              </p>
-            </div>
+    <div className="flex flex-col lg:flex-row w-full min-h-screen animated-bg">
+      <Sidebar />
+      <div className="flex-1 w-full p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto w-full space-y-6">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+              My Profile
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              Manage your account information and preferences
+            </p>
+          </div>
 
             {successMessage && (
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
@@ -321,8 +320,7 @@ const Profile = () => {
                 </p>
               )}
             </div>
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   );

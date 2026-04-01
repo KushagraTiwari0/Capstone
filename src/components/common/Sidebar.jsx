@@ -9,24 +9,24 @@ const Sidebar = () => {
 
   const menuItems = [];
 
-  // Admin users only see admin dashboard and profile
   if (user?.role === 'admin') {
     menuItems.push({ path: '/admin', label: 'Admin Dashboard', icon: '👑' });
     menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
-  } else {
-    // Regular users see all menu items
-    menuItems.push(
-      { path: '/lessons', label: 'Lessons', icon: '📚' },
-      { path: '/tasks', label: 'Tasks', icon: '✅' },
-      { path: '/badges', label: 'Badges', icon: '🏆' },
-      { path: '/leaderboard', label: 'Leaderboard', icon: '📊' },
-      { path: '/profile', label: 'Profile', icon: '👤' }
-    );
 
-    if (user?.role === 'teacher') {
-      menuItems.push({ path: '/teacher', label: 'Teacher Dashboard', icon: '👨‍🏫' });
-      menuItems.push({ path: '/analytics', label: 'Analytics', icon: '📈' });
-    }
+  } else if (user?.role === 'teacher') {
+    // ✅ Teachers: no Lessons, no Badges, no Points
+    menuItems.push({ path: '/teacher', label: 'Teacher Dashboard', icon: '👨‍🏫' });
+    menuItems.push({ path: '/analytics', label: 'Analytics', icon: '📈' });
+    menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
+    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
+
+  } else {
+    // ✅ Students see Lessons + Tasks
+    menuItems.push({ path: '/lessons', label: 'Lessons', icon: '📚' });
+    menuItems.push({ path: '/tasks', label: 'Tasks', icon: '✅' });
+    menuItems.push({ path: '/badges', label: 'Badges', icon: '🏆' });
+    menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
+    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
   }
 
   const isActive = (path) => location.pathname.startsWith(path);
@@ -36,7 +36,7 @@ const Sidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-16 sm:top-4 left-4 z-50 p-3 rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+        className="lg:hidden fixed top-20 left-4 z-50 p-3 rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md hover:shadow-lg transform hover:scale-105 transition-all"
         aria-label="Toggle menu"
       >
         {isOpen ? (
@@ -60,8 +60,8 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-white to-primary-50/30 min-h-screen p-4 transform transition-transform duration-300 ease-in-out border-r border-primary-100 shadow-lg lg:shadow-none ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-background-light min-h-screen p-4 transform transition-transform duration-300 ease-in-out border-r border-primary-200 shadow-lg lg:shadow-none flex flex-col ${
+          isOpen ? 'translate-x-0 pt-20 sm:pt-20' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         <div className="mb-6 animate-slide-down">
@@ -76,7 +76,7 @@ const Sidebar = () => {
                 <p className="text-xs text-primary-600 capitalize font-medium">{user?.role}</p>
               </div>
             </div>
-            {user?.role !== 'admin' && (
+            {user?.role === 'student' && (
               <div className="mt-3 pt-3 border-t border-primary-200">
                 <div className="flex items-center justify-between bg-gradient-to-r from-yellow-50 to-yellow-100 px-3 py-2 rounded-lg border border-yellow-200">
                   <span className="text-sm text-gray-700 font-medium flex items-center gap-1">
@@ -89,7 +89,7 @@ const Sidebar = () => {
             )}
           </div>
         </div>
-        
+
         <nav className="space-y-2">
           {menuItems.map((item, index) => (
             <Link
@@ -105,9 +105,7 @@ const Sidebar = () => {
             >
               <span className={`text-xl ${isActive(item.path) ? 'animate-bounce-slow' : ''}`}>{item.icon}</span>
               <span className="font-semibold">{item.label}</span>
-              {isActive(item.path) && (
-                <span className="ml-auto text-sm">→</span>
-              )}
+              {isActive(item.path) && <span className="ml-auto text-sm">→</span>}
             </Link>
           ))}
         </nav>
@@ -117,4 +115,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

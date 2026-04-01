@@ -10,7 +10,8 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'student'
+    role: 'student',
+    classLevel: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -90,12 +91,12 @@ const Register = () => {
     }
 
     try {
-      // Call backend service
       const result = await registerUser({
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: formData.role
+        role: formData.role,
+        classLevel: formData.role !== 'admin' ? formData.classLevel : undefined
       });
 
       if (result.success) {
@@ -210,6 +211,27 @@ const Register = () => {
               <option value="teacher">Teacher</option>
             </select>
           </div>
+
+          {(formData.role === 'student' || formData.role === 'teacher') && (
+            <div>
+              <label htmlFor="classLevel" className="block text-sm font-medium text-gray-700 mb-2">
+                Class / Session
+              </label>
+              <select
+                id="classLevel"
+                name="classLevel"
+                value={formData.classLevel}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                required
+              >
+                <option value="" disabled>Select your class</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                  <option key={num} value={num}>Class {num}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
