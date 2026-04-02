@@ -4,14 +4,27 @@ import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Leaderboard (defaults to students; excludes admins)
-// GET /api/leaderboard?role=student|teacher&level=beginner|intermediate|advanced|expert&page=1&limit=20
+// ── Helper: count only unique, valid earned badges ────────────────────────────
+// The badges array stores { badgeId, earnedAt } objects.
+// We deduplicate by badgeId string to avoid double-counting.
+const countUniqueBadges = (badgesArr) => {
+  if (!Array.isArray(badgesArr) || badgesArr.length === 0) return 0;
+  const seen = new Set();
+  for (const b of badgesArr) {
+    if (b && b.badgeId) {
+      seen.add(b.badgeId.toString());
+    }
+  }
+  return seen.size;
+};
+
+// GET /api/leaderboard
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { role, level, page = 1, limit = 20 } = req.query;
-    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const pageNum  = Math.max(1, parseInt(page,  10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
-    const skip = (pageNum - 1) * limitNum;
+    const skip     = (pageNum - 1) * limitNum;
 
     const requestedRole = (role || 'student').toString().toLowerCase();
     if (!['student', 'teacher'].includes(requestedRole)) {
@@ -21,21 +34,16 @@ router.get('/', authMiddleware, async (req, res) => {
       });
     }
 
-    let userClassLevel = null;
     let me = null;
     if (req.userId) {
       me = await User.findById(req.userId).select('points role status classLevel').lean();
-      if (me) userClassLevel = me.classLevel;
     }
 
-    const baseQuery = { 
-      role: requestedRole,
-      status: 'approved' // Only show approved users in leaderboard
-    };
-    
-    // Auto-filter students by classLevel if the user belongs to a class
-    if (requestedRole === 'student' && userClassLevel && me.role !== 'admin') {
-      baseQuery.classLevel = userClassLevel;
+    const baseQuery = { role: requestedRole, status: 'approved' };
+
+    // Students scoped to their classLevel (unless admin is viewing)
+    if (requestedRole === 'student' && me?.classLevel && me?.role !== 'admin') {
+      baseQuery.classLevel = me.classLevel;
     }
     if (level) {
       baseQuery.level = new RegExp(`^${level}$`, 'i');
@@ -44,34 +52,34 @@ router.get('/', authMiddleware, async (req, res) => {
     const total = await User.countDocuments(baseQuery);
 
     const users = await User.find(baseQuery)
-      .select('name avatar points level badges role')
+      .select('name avatar points level badges quizScores role')
       .sort({ points: -1, updatedAt: -1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
 
     const leaderboardUsers = users.map((u, idx) => ({
-      id: u._id,
-      name: u.name,
-      avatar: u.avatar || '👤',
-      points: u.points || 0,
-      level: u.level || 'Beginner',
-      role: u.role,
-      badges: Array.isArray(u.badges) ? u.badges.length : 0,
-      rank: skip + idx + 1,
+      id:         u._id,
+      name:       u.name,
+      avatar:     u.avatar || '👤',
+      points:     u.points || 0,
+      level:      u.level  || 'Beginner',
+      role:       u.role,
+      // ✅ FIX: deduplicated badge count
+      badges:     countUniqueBadges(u.badges),
+      // ✅ FIX: correct average quiz score from quizScores array
+      avgQuiz:    calcAvgQuiz(u.quizScores),
+      rank:       skip + idx + 1,
     }));
 
-    // Current user rank (among approved non-admin leaderboard users)
+    // Current user rank
     let currentUserRank = null;
-    if (req.userId && me) {
-      // Only show rank if user is approved and matches requested role
-      if (me.role === requestedRole && (me.status === 'approved' || !me.status)) {
-        const betterCount = await User.countDocuments({
-          ...baseQuery,
-          points: { $gt: me.points || 0 },
-        });
-        currentUserRank = betterCount + 1;
-      }
+    if (me && me.role === requestedRole && (me.status === 'approved' || !me.status)) {
+      const betterCount = await User.countDocuments({
+        ...baseQuery,
+        points: { $gt: me.points || 0 },
+      });
+      currentUserRank = betterCount + 1;
     }
 
     res.json({
@@ -81,7 +89,7 @@ router.get('/', authMiddleware, async (req, res) => {
         currentUserRank,
         pagination: {
           total,
-          page: pageNum,
+          page:  pageNum,
           limit: limitNum,
           pages: Math.ceil(total / limitNum) || 1,
         },
@@ -91,9 +99,7 @@ router.get('/', authMiddleware, async (req, res) => {
     console.error('Get leaderboard error:', error);
     res.status(500).json({
       success: false,
-      error: {
-        message: error.message || 'An error occurred while fetching leaderboard',
-      },
+      error: { message: error.message || 'An error occurred while fetching leaderboard' },
     });
   }
 });
@@ -101,8 +107,9 @@ router.get('/', authMiddleware, async (req, res) => {
 // GET /api/leaderboard/top?limit=5
 router.get('/top', authMiddleware, async (req, res) => {
   try {
-    const limitNum = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
+    const limitNum      = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
     const requestedRole = ((req.query.role || 'student') + '').toLowerCase();
+
     if (!['student', 'teacher'].includes(requestedRole)) {
       return res.status(400).json({
         success: false,
@@ -115,17 +122,13 @@ router.get('/top', authMiddleware, async (req, res) => {
       me = await User.findById(req.userId).select('classLevel role').lean();
     }
 
-    const baseQuery = { 
-      role: requestedRole,
-      status: 'approved' // Only show approved users
-    };
-
-    if (requestedRole === 'student' && me && me.role !== 'admin' && me.classLevel) {
+    const baseQuery = { role: requestedRole, status: 'approved' };
+    if (requestedRole === 'student' && me?.role !== 'admin' && me?.classLevel) {
       baseQuery.classLevel = me.classLevel;
     }
 
     const users = await User.find(baseQuery)
-      .select('name avatar points level badges role')
+      .select('name avatar points level badges quizScores role')
       .sort({ points: -1, updatedAt: -1 })
       .limit(limitNum)
       .lean();
@@ -134,14 +137,15 @@ router.get('/top', authMiddleware, async (req, res) => {
       success: true,
       data: {
         users: users.map((u, idx) => ({
-          id: u._id,
-          name: u.name,
-          avatar: u.avatar || '👤',
-          points: u.points || 0,
-          level: u.level || 'Beginner',
-          role: u.role,
-          badges: Array.isArray(u.badges) ? u.badges.length : 0,
-          rank: idx + 1,
+          id:      u._id,
+          name:    u.name,
+          avatar:  u.avatar || '👤',
+          points:  u.points || 0,
+          level:   u.level  || 'Beginner',
+          role:    u.role,
+          badges:  countUniqueBadges(u.badges),
+          avgQuiz: calcAvgQuiz(u.quizScores),
+          rank:    idx + 1,
         })),
       },
     });
@@ -154,5 +158,14 @@ router.get('/top', authMiddleware, async (req, res) => {
   }
 });
 
-export default router;
+// ── Helper: average quiz percentage from quizScores array ────────────────────
+// quizScores is [{ quizId, score, total, percentage, date }]
+// Returns rounded integer or null if no scores
+function calcAvgQuiz(quizScores) {
+  if (!Array.isArray(quizScores) || quizScores.length === 0) return null;
+  const valid = quizScores.filter(q => typeof q.percentage === 'number');
+  if (valid.length === 0) return null;
+  return Math.round(valid.reduce((sum, q) => sum + q.percentage, 0) / valid.length);
+}
 
+export default router;
