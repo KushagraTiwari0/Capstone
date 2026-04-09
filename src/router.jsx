@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import LandingPage from "./pages/Landing/Landingpage ";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import LessonList from "./pages/Learning/LessonList";
@@ -27,86 +28,28 @@ export const router = createBrowserRouter(
       children: [
         {
           index: true,
-          element: <Navigate to="/login" replace />,
+          element: <LandingPage />, // ✅ Landing page as entry point
         },
-        {
-          path: "login",
-          element: <Login />,
-        },
-        {
-          path: "register",
-          element: <Register />,
-        },
-        {
-          path: "lessons",
-          element: <LessonList />,
-        },
-        {
-          path: "lessons/:id",
-          element: <LessonDetail />,
-        },
-        {
-          path: "quiz/:id",
-          element: <QuizPage />,
-        },
-        {
-          path: "quiz/:id/summary",
-          element: <QuizSummary />,
-        },
-        {
-          path: "tasks",
-          element: <TaskList />,
-        },
-        {
-          path: "tasks/:id/submit",
-          element: <TaskSubmit />,
-        },
-        {
-          path: "badges",
-          element: <Badges />,
-        },
-        {
-          path: "points",
-          element: <Points />,
-        },
-        {
-          path: "leaderboard",
-          element: <Leaderboard />,
-        },
-        {
-          path: "analytics",
-          element: <AnalyticsDashboard />,
-        },
-        {
-          path: "teacher",
-          element: <TeacherDashboard />,
-        },
-        {
-          path: "admin",
-          element: <AdminDashboard />,
-        },
-        {
-          path: "admin/lessons/create",
-          element: <CreateLesson />,
-        },
-        {
-          path: "admin/lessons/edit/:id",
-          element: <EditLesson />,
-        },
-        {
-          path: "profile",
-          element: <Profile />,
-        },
-        {
-          path: "*",
-          element: <NotFound />,
-        },
+        { path: "login",    element: <Login /> },
+        { path: "register", element: <Register /> },
+        { path: "lessons",              element: <LessonList /> },
+        { path: "lessons/:id",          element: <LessonDetail /> },
+        { path: "quiz/:id",             element: <QuizPage /> },
+        { path: "quiz/:id/summary",     element: <QuizSummary /> },
+        { path: "tasks",                element: <TaskList /> },
+        { path: "tasks/:id/submit",     element: <TaskSubmit /> },
+        { path: "badges",               element: <Badges /> },
+        { path: "points",               element: <Points /> },
+        { path: "leaderboard",          element: <Leaderboard /> },
+        { path: "analytics",            element: <AnalyticsDashboard /> },
+        { path: "teacher",              element: <TeacherDashboard /> },
+        { path: "admin",                element: <AdminDashboard /> },
+        { path: "admin/lessons/create", element: <CreateLesson /> },
+        { path: "admin/lessons/edit/:id", element: <EditLesson /> },
+        { path: "profile",              element: <Profile /> },
+        { path: "*",                    element: <NotFound /> },
       ],
     },
   ],
-  {
-    future: {
-      v7_startTransition: true,
-    },
-  }
+  { future: { v7_startTransition: true } }
 );

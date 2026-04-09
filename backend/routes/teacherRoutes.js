@@ -226,10 +226,20 @@ router.put('/submissions/:id/approve', authMiddleware, teacherMiddleware, async 
     // Find submission first to validate access
     const submission = await TaskSubmission.findById(id);
 
-    if (!submission || submission.status !== 'pending' || submission.classLevel !== req.user.classLevel) {
+    if (!submission || submission.status !== 'pending') {
       return res.status(404).json({
         success: false,
-        error: { message: 'Pending submission not found or access denied' }
+        error: { message: 'Pending submission not found' }
+      });
+    }
+
+    // ✅ FIX: Verify via student's classLevel, not submission.classLevel
+    // Old submissions may have wrong classLevel stored
+    const submissionStudent = await User.findById(submission.studentId).select('classLevel');
+    if (!submissionStudent || submissionStudent.classLevel !== req.user.classLevel) {
+      return res.status(403).json({
+        success: false,
+        error: { message: 'Access denied — student not in your class' }
       });
     }
 
@@ -300,10 +310,19 @@ router.put('/submissions/:id/reject', authMiddleware, teacherMiddleware, async (
     // Find submission first to validate access
     const submission = await TaskSubmission.findById(id);
 
-    if (!submission || submission.status !== 'pending' || submission.classLevel !== req.user.classLevel) {
+    if (!submission || submission.status !== 'pending') {
       return res.status(404).json({
         success: false,
-        error: { message: 'Pending submission not found or access denied' }
+        error: { message: 'Pending submission not found' }
+      });
+    }
+
+    // ✅ FIX: Verify via student's classLevel, not submission.classLevel
+    const submissionStudent2 = await User.findById(submission.studentId).select('classLevel');
+    if (!submissionStudent2 || submissionStudent2.classLevel !== req.user.classLevel) {
+      return res.status(403).json({
+        success: false,
+        error: { message: 'Access denied — student not in your class' }
       });
     }
 
