@@ -11,6 +11,7 @@ import leaderboardRoutes from './backend/routes/leaderboardRoutes.js';
 import analyticsRoutes from './backend/routes/analyticsRoutes.js';
 import lessonRoutes from './backend/routes/lessonRoutes.js';
 import badgeRoutes from './backend/routes/badgeRoutes.js';
+import gameRoutes from './backend/routes/gameRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -63,6 +64,7 @@ app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/badges', badgeRoutes);
+app.use('/api/games', gameRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

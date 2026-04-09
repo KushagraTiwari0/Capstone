@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   if (!user) {
@@ -65,7 +65,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16">
 
-          {/* Logo — students go to /lessons, teachers to /teacher, admin to /admin */}
+          {/* Logo */}
           <Link
             to={isAdmin ? '/admin' : isTeacher ? '/teacher' : '/lessons'}
             className="flex items-center space-x-2 group"
@@ -93,27 +93,24 @@ const Navbar = () => {
               {/* ✅ Student-only links */}
               {isStudent && (
                 <>
-                  {navLink('/lessons', '📚 Lessons')}
-                  {navLink('/tasks',   '✅ Tasks')}
-                  
+                  {navLink('/lessons',     '📚 Lessons')}
+                  {navLink('/tasks',       '✅ Tasks')}
+                  {navLink('/games',       '🎮 Games')}        {/* ✅ ADDED */}
                   {navLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
 
-              {/* ✅ Teacher-only links — NO Lessons, NO Tasks */}
+              {/* ✅ Teacher-only links */}
               {isTeacher && (
                 <>
                   {navLink('/teacher',     '👨‍🏫 Teacher')}
                   {navLink('/analytics',   '📈 Analytics')}
-                  
                   {navLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
 
               {/* ✅ Admin-only links */}
-              {isAdmin && (
-                navLink('/admin', '👑 Admin')
-              )}
+              {isAdmin && navLink('/admin', '👑 Admin')}
 
               {/* Profile — everyone */}
               {navLink('/profile', '👤 Profile')}
@@ -166,12 +163,13 @@ const Navbar = () => {
                 <>
                   {mobileLink('/lessons',     '📚 Lessons')}
                   {mobileLink('/tasks',       '✅ Tasks')}
+                  {mobileLink('/games',       '🎮 Games')}        {/* ✅ ADDED */}
                   {mobileLink('/badges',      '🏆 Badges')}
                   {mobileLink('/leaderboard', '📊 Leaderboard')}
                 </>
               )}
 
-              {/* ✅ Teacher-only — NO Lessons, NO Tasks, NO Badges, NO Points */}
+              {/* ✅ Teacher-only */}
               {isTeacher && (
                 <>
                   {mobileLink('/teacher',     '👨‍🏫 Teacher')}

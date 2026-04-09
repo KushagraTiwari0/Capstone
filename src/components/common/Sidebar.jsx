@@ -10,23 +10,23 @@ const Sidebar = () => {
   const menuItems = [];
 
   if (user?.role === 'admin') {
-    menuItems.push({ path: '/admin', label: 'Admin Dashboard', icon: '👑' });
-    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
+    menuItems.push({ path: '/admin',   label: 'Admin Dashboard', icon: '👑' });
+    menuItems.push({ path: '/profile', label: 'Profile',         icon: '👤' });
 
   } else if (user?.role === 'teacher') {
-    // ✅ Teachers: no Lessons, no Badges, no Points
-    menuItems.push({ path: '/teacher', label: 'Teacher Dashboard', icon: '👨‍🏫' });
-    menuItems.push({ path: '/analytics', label: 'Analytics', icon: '📈' });
-    menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
-    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
+    menuItems.push({ path: '/teacher',     label: 'Teacher Dashboard', icon: '👨‍🏫' });
+    menuItems.push({ path: '/analytics',   label: 'Analytics',         icon: '📈' });
+    menuItems.push({ path: '/leaderboard', label: 'Leaderboard',       icon: '📊' });
+    menuItems.push({ path: '/profile',     label: 'Profile',           icon: '👤' });
 
   } else {
-    // ✅ Students see Lessons + Tasks
-    menuItems.push({ path: '/lessons', label: 'Lessons', icon: '📚' });
-    menuItems.push({ path: '/tasks', label: 'Tasks', icon: '✅' });
-    menuItems.push({ path: '/badges', label: 'Badges', icon: '🏆' });
+    // ✅ Students
+    menuItems.push({ path: '/lessons',     label: 'Lessons',     icon: '📚' });
+    menuItems.push({ path: '/tasks',       label: 'Tasks',       icon: '✅' });
+    menuItems.push({ path: '/games',       label: 'Games',       icon: '🎮' }); // ✅ ADDED
+    menuItems.push({ path: '/badges',      label: 'Badges',      icon: '🏆' });
     menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
-    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
+    menuItems.push({ path: '/profile',     label: 'Profile',     icon: '👤' });
   }
 
   const isActive = (path) => location.pathname.startsWith(path);

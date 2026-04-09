@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema({
     type: Number,
     min: [6, 'Class level must be at least 6'],
     max: [10, 'Class level cannot exceed 10'],
-    // Required for students and teachers, but admin does not need it. Check handled in validation or route.
   },
   status: {
     type: String,
@@ -60,7 +59,7 @@ const userSchema = new mongoose.Schema({
   },
   badges: [{
     badgeId: {
-      type: mongoose.Schema.Types.Mixed, // Can be ObjectId or numeric ID from JSON
+      type: mongoose.Schema.Types.Mixed,
       ref: 'Badge'
     },
     earnedAt: {
@@ -69,15 +68,15 @@ const userSchema = new mongoose.Schema({
     }
   }],
   completedLessons: [{
-    type: mongoose.Schema.Types.Mixed // Can be ObjectId or numeric ID from JSON
+    type: mongoose.Schema.Types.Mixed
   }],
   completedTasks: [{
-    type: mongoose.Schema.Types.Mixed, // Can be ObjectId or numeric ID from JSON
+    type: mongoose.Schema.Types.Mixed,
     ref: 'Task'
   }],
   quizScores: [{
     quizId: {
-      type: mongoose.Schema.Types.Mixed, // Can be ObjectId or numeric ID from JSON
+      type: mongoose.Schema.Types.Mixed,
       ref: 'Quiz'
     },
     score: Number,
@@ -87,18 +86,35 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  }],
+
+  // ── Game stats — one entry per game played ─────────────────────────────────
+  gameStats: [{
+    gameId: {
+      type: String,
+      required: true
+    },
+    opens: {
+      type: Number,
+      default: 0
+    },
+    plays: {
+      type: Number,
+      default: 0
+    },
+    lastPlayedAt: {
+      type: Date,
+      default: null
+    }
   }]
+
 }, {
   timestamps: true
 });
 
 // Hash password before saving
 userSchema.pre('save', async function() {
-  // Only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) {
-    return;
-  }
-  
+  if (!this.isModified('password')) return;
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -107,34 +123,26 @@ userSchema.pre('save', async function() {
   }
 });
 
-// Method to compare password
+// Compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Method to check if user is approved (handles legacy users without status)
+// Check if user is approved (handles legacy users without status)
 userSchema.methods.isApproved = function() {
-  // Legacy users without status field are treated as approved
-  if (!this.status) {
-    return true;
-  }
+  if (!this.status) return true;
   return this.status === 'approved';
 };
 
-// Method to remove password from JSON output
+// Remove password from JSON output
 userSchema.methods.toJSON = function() {
   const userObject = this.toObject();
   delete userObject.password;
-  
-  // For legacy users without status, set status to 'approved' in JSON output
-  // This ensures backward compatibility
   if (!userObject.status) {
     userObject.status = 'approved';
   }
-  
   return userObject;
 };
 
 const User = mongoose.model('User', userSchema);
-
 export default User;
