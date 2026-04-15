@@ -4,7 +4,7 @@ import { updateUserProfile } from "../../services/authService";
 import Sidebar from "../../components/common/Sidebar";
 import Button from "../../components/common/Button";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_URL ;
 
 const AVATARS = ["👤", "👨", "👩", "🧑", "👨‍🎓", "👩‍🎓", "🌿", "🌱", "🦁", "🐯", "🦊", "🐧"];
 
