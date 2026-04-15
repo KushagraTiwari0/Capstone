@@ -30,24 +30,25 @@ export const UserProvider = ({ children }) => {
           // Fetch current user data from API
           const currentUser = await getCurrentUser();
           if (currentUser) {
-            // Check if user is approved - only approved users should be logged in
-            // Legacy users (without status) are treated as approved
             const userStatus = currentUser.status || 'approved';
             if (userStatus !== 'approved') {
-              // User is pending or rejected, log them out
               logout();
             } else {
               setUser(currentUser);
+              
+              // Set initial combined points immediately to prevent "0" flash
+              const lessonPts = currentUser.points || 0;
+              const gamePts = currentUser.exp || 0;
+              setPoints(lessonPts + gamePts);
+
               // Load user progress from API
               await loadUserProgress();
             }
           } else {
-            // If user not found, token might be invalid
             logout();
           }
         } catch (error) {
           console.error('Error loading user data:', error);
-          // If token is invalid, clear everything
           logout();
         }
       }
@@ -57,7 +58,7 @@ export const UserProvider = ({ children }) => {
     loadUserData();
   }, []);
 
-  // Load user progress from backend
+  // 🌟 THE FIX: Load BOTH progress and game stats simultaneously! 🌟
   const loadUserProgress = async () => {
     try {
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -68,41 +69,54 @@ export const UserProvider = ({ children }) => {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/users/me/progress`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      // Fetch from BOTH APIs at the same time using Promise.all
+      const [progressRes, statsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/users/me/progress`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        }),
+        fetch(`${API_BASE_URL}/games/stats`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        }).catch(() => ({ ok: false })) // Catch errors safely
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setPoints(data.data.points || 0);
-          setBadges(data.data.badges || []);
-          setCompletedLessons(data.data.completedLessons || []);
-          setCompletedTasks(data.data.completedTasks || []);
-          setQuizScores(data.data.quizScores || {});
+      if (progressRes.ok) {
+        const progData = await progressRes.json();
+        
+        // Safely extract the game EXP from the dedicated Games endpoint
+        let gameExp = 0;
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          if (statsData.success && statsData.data) {
+            gameExp = statsData.data.exp || 0;
+          }
+        }
+
+        if (progData.success && progData.data) {
+          
+          // Combine authoritative Lesson points with authoritative Game EXP
+          const lessonPts = progData.data.points || 0;
+          setPoints(lessonPts + gameExp);
+
+          setBadges(progData.data.badges || []);
+          setCompletedLessons(progData.data.completedLessons || []);
+          setCompletedTasks(progData.data.completedTasks || []);
+          setQuizScores(progData.data.quizScores || {});
         }
       } else {
-        // Handle non-OK responses
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await progressRes.json().catch(() => ({}));
         console.error('Failed to load user progress:', errorData.error?.message || 'Unknown error');
         
-        // If unauthorized, clear token and logout
-        if (response.status === 401) {
+        if (progressRes.status === 401) {
           logout();
         }
       }
     } catch (error) {
       console.error('Error loading user progress:', error);
-      // Don't logout on network errors, just log the error
     }
   };
 
   const login = (userData) => {
     setUser(userData);
-    // Load user progress after login
     loadUserProgress();
   };
 
@@ -128,7 +142,8 @@ export const UserProvider = ({ children }) => {
     try {
       const result = await addPointsAPI(amount);
       if (result.success && result.data) {
-        setPoints(result.data.points);
+        // Reload combined progress safely
+        await loadUserProgress();
       } else {
         // If backend save fails, revert local state
         setPoints(prev => prev - amount);
@@ -136,92 +151,65 @@ export const UserProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error saving points:', error);
-      // Revert local state on error
       setPoints(prev => prev - amount);
     }
   };
 
   const addBadge = async (badge) => {
-    // Check if badge already exists locally
     if (badges.find(b => b.id === badge.id || (b.badgeId && b.badgeId.toString() === badge.id.toString()))) {
       return;
     }
 
-    // Update local state immediately
     setBadges(prev => [...prev, badge]);
     
-    // Save to backend
     try {
       const result = await awardBadge(badge.id, {
         badgeId: badge.id,
         badgeData: badge
       });
       if (result.success && result.data) {
-        // Reload progress to get updated badges from backend
         await loadUserProgress();
       } else {
-        // If backend save fails, remove from local state
         setBadges(prev => prev.filter(b => b.id !== badge.id));
         console.error('Failed to save badge to backend:', result.error);
       }
     } catch (error) {
       console.error('Error saving badge:', error);
-      // Remove from local state on error
       setBadges(prev => prev.filter(b => b.id !== badge.id));
     }
   };
 
   const completeLesson = async (lessonId, lessonData) => {
-    // Check if already completed locally
-    if (completedLessons.includes(lessonId)) {
-      return;
-    }
+    if (completedLessons.includes(lessonId)) return;
 
-    // Update local state immediately
     setCompletedLessons(prev => [...prev, lessonId]);
     
-    // Save to backend
     try {
       const result = await completeLessonAPI(lessonId, lessonData);
       if (result.success && result.data) {
-        // Update points and level from backend response
-        if (result.data.points !== undefined) {
-          setPoints(result.data.points);
-        }
-        // Reload progress to ensure sync
         await loadUserProgress();
       } else {
-        // If backend save fails, remove from local state
         setCompletedLessons(prev => prev.filter(id => id !== lessonId));
         console.error('Failed to save lesson completion to backend:', result.error);
       }
     } catch (error) {
       console.error('Error saving lesson completion:', error);
-      // Remove from local state on error
       setCompletedLessons(prev => prev.filter(id => id !== lessonId));
     }
   };
 
   const saveQuizScore = async (quizId, score, percentage, total) => {
-    // Update local state immediately
     setQuizScores(prev => ({
       ...prev,
       [quizId]: { score, percentage, total, date: new Date().toISOString() }
     }));
     
-    // Save to backend
     try {
       const result = await saveQuizScoreAPI(quizId, score, total, percentage);
       if (result.success && result.data) {
-        // Update points and level from backend response
-        if (result.data.points !== undefined) {
-          setPoints(result.data.points);
-        }
-        // Reload progress to ensure sync
         await loadUserProgress();
       } else {
         console.error('Failed to save quiz score to backend:', result.error);
-        // Don't revert local state for quiz scores as they're less critical
       }
     } catch (error) {
       console.error('Error saving quiz score:', error);
@@ -229,12 +217,8 @@ export const UserProvider = ({ children }) => {
   };
 
   const completeTask = (taskId) => {
-    // This is handled by the TaskSubmit component which calls the backend API directly
-    // We just update local state here for immediate UI feedback
     setCompletedTasks(prev => {
-      if (prev.includes(taskId)) {
-        return prev;
-      }
+      if (prev.includes(taskId)) return prev;
       return [...prev, taskId];
     });
   };
@@ -264,4 +248,3 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-

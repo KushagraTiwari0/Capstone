@@ -52,6 +52,18 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  
+  // ── Game Progression Fields ───────────────────────────────────────────
+  totalPoints: {
+    type: Number,
+    default: 0
+  },
+  exp: {
+    type: Number,
+    default: 0
+  },
+  // ─────────────────────────────────────────────────────────────────────────
+
   level: {
     type: String,
     enum: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
@@ -102,6 +114,14 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    points: {
+      type: Number,
+      default: 0
+    },
+    bestScore: {
+      type: Number,
+      default: 0
+    },
     lastPlayedAt: {
       type: Date,
       default: null
@@ -128,7 +148,7 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Check if user is approved (handles legacy users without status)
+// Check if user is approved
 userSchema.methods.isApproved = function() {
   if (!this.status) return true;
   return this.status === 'approved';

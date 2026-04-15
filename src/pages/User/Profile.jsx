@@ -60,9 +60,14 @@ const Profile = () => {
 
       if (profileJson.success) {
         const u = profileJson.user;
+        
+        // 🌟 FIX: Use `exp` (Converted Points) instead of raw `totalPoints`
+        const lessonPoints = progressJson.data?.points ?? u.points ?? 0;
+        const gameExp = progressJson.data?.exp ?? u.exp ?? 0;
+        
         setProfileData({
           ...u,
-          points:           progressJson.data?.points           ?? u.points ?? 0,
+          points:           lessonPoints + gameExp, // This now safely equals your correct total!
           level:            progressJson.data?.level            ?? u.level  ?? "Beginner",
           badges:           progressJson.data?.badges           ?? [],
           completedLessons: progressJson.data?.completedLessons ?? [],

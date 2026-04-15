@@ -10,23 +10,22 @@ const Sidebar = () => {
   const menuItems = [];
 
   if (user?.role === 'admin') {
-    menuItems.push({ path: '/admin',   label: 'Admin Dashboard', icon: '👑' });
-    menuItems.push({ path: '/profile', label: 'Profile',         icon: '👤' });
+    menuItems.push({ path: '/admin', label: 'Admin Dashboard', icon: '👑' });
+    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
 
   } else if (user?.role === 'teacher') {
-    menuItems.push({ path: '/teacher',     label: 'Teacher Dashboard', icon: '👨‍🏫' });
-    menuItems.push({ path: '/analytics',   label: 'Analytics',         icon: '📈' });
-    menuItems.push({ path: '/leaderboard', label: 'Leaderboard',       icon: '📊' });
-    menuItems.push({ path: '/profile',     label: 'Profile',           icon: '👤' });
+    menuItems.push({ path: '/teacher', label: 'Teacher Dashboard', icon: '👨‍🏫' });
+    menuItems.push({ path: '/analytics', label: 'Analytics', icon: '📈' });
+    menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
+    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
 
   } else {
-    // ✅ Students
-    menuItems.push({ path: '/lessons',     label: 'Lessons',     icon: '📚' });
-    menuItems.push({ path: '/tasks',       label: 'Tasks',       icon: '✅' });
-    menuItems.push({ path: '/games',       label: 'Games',       icon: '🎮' }); // ✅ ADDED
-    menuItems.push({ path: '/badges',      label: 'Badges',      icon: '🏆' });
+    menuItems.push({ path: '/lessons', label: 'Lessons', icon: '📚' });
+    menuItems.push({ path: '/tasks', label: 'Tasks', icon: '✅' });
+    menuItems.push({ path: '/games', label: 'Eco Games', icon: '🎮' });
+    menuItems.push({ path: '/badges', label: 'Badges', icon: '🏆' });
     menuItems.push({ path: '/leaderboard', label: 'Leaderboard', icon: '📊' });
-    menuItems.push({ path: '/profile',     label: 'Profile',     icon: '👤' });
+    menuItems.push({ path: '/profile', label: 'Profile', icon: '👤' });
   }
 
   const isActive = (path) => location.pathname.startsWith(path);
@@ -58,10 +57,14 @@ const Sidebar = () => {
         />
       )}
 
-      {/* Sidebar */}
+      {/* INVISIBLE SPACER for Desktop Flexbox */}
+      <div className="hidden lg:block w-64 flex-shrink-0"></div>
+
+      {/* THE SIDEBAR */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-background-light min-h-screen p-4 transform transition-transform duration-300 ease-in-out border-r border-primary-200 shadow-lg lg:shadow-none flex flex-col ${
-          isOpen ? 'translate-x-0 pt-20 sm:pt-20' : '-translate-x-full lg:translate-x-0'
+        className={`fixed inset-y-0 left-0 z-40 w-64 h-screen p-4 transform transition-transform duration-300 ease-in-out flex flex-col sidebar-glass sidebar-scroll ${
+          // FIX: Added lg:pt-24 here so it sits perfectly under the 64px tall Navbar
+          isOpen ? 'translate-x-0 pt-20 sm:pt-20' : '-translate-x-full lg:translate-x-0 lg:pt-24'
         }`}
       >
         <div className="mb-6 animate-slide-down">
@@ -96,9 +99,9 @@ const Sidebar = () => {
               key={item.path}
               to={item.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 animate-slide-up environment-card ${
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl environment-card sidebar-link-hover ${
                 isActive(item.path)
-                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30'
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30 sidebar-link-active'
                   : 'text-gray-700 hover:bg-white hover:shadow-md border border-transparent hover:border-primary-200'
               }`}
               style={{ animationDelay: `${index * 50}ms` }}

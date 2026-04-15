@@ -5,8 +5,6 @@ import authMiddleware from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // ── Helper: count only unique, valid earned badges ────────────────────────────
-// The badges array stores { badgeId, earnedAt } objects.
-// We deduplicate by badgeId string to avoid double-counting.
 const countUniqueBadges = (badgesArr) => {
   if (!Array.isArray(badgesArr) || badgesArr.length === 0) return 0;
   const seen = new Set();
@@ -36,7 +34,8 @@ router.get('/', authMiddleware, async (req, res) => {
 
     let me = null;
     if (req.userId) {
-      me = await User.findById(req.userId).select('points role status classLevel').lean();
+      // 🌟 FIX: Make sure we fetch `exp` for the current user too
+      me = await User.findById(req.userId).select('points exp role status classLevel').lean();
     }
 
     const baseQuery = { role: requestedRole, status: 'approved' };
@@ -51,23 +50,33 @@ router.get('/', authMiddleware, async (req, res) => {
 
     const total = await User.countDocuments(baseQuery);
 
-    const users = await User.find(baseQuery)
-      .select('name avatar points level badges quizScores role')
-      .sort({ points: -1, updatedAt: -1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean();
+    // 🌟 FIX: Use an Aggregation Pipeline to add `points` + `exp` together, then sort
+    const users = await User.aggregate([
+      { $match: baseQuery },
+      { 
+        $addFields: {
+          totalScore: { 
+            $add: [
+              { $ifNull: ['$points', 0] }, 
+              { $ifNull: ['$exp', 0] }
+            ] 
+          }
+        }
+      },
+      { $sort: { totalScore: -1, updatedAt: -1 } },
+      { $skip: skip },
+      { $limit: limitNum },
+      { $project: { name: 1, avatar: 1, points: 1, exp: 1, totalScore: 1, level: 1, badges: 1, quizScores: 1, role: 1 } }
+    ]);
 
     const leaderboardUsers = users.map((u, idx) => ({
       id:         u._id,
       name:       u.name,
       avatar:     u.avatar || '👤',
-      points:     u.points || 0,
+      points:     u.totalScore, // 🌟 FIX: Send back the combined totalScore!
       level:      u.level  || 'Beginner',
       role:       u.role,
-      // ✅ FIX: deduplicated badge count
       badges:     countUniqueBadges(u.badges),
-      // ✅ FIX: correct average quiz score from quizScores array
       avgQuiz:    calcAvgQuiz(u.quizScores),
       rank:       skip + idx + 1,
     }));
@@ -75,9 +84,17 @@ router.get('/', authMiddleware, async (req, res) => {
     // Current user rank
     let currentUserRank = null;
     if (me && me.role === requestedRole && (me.status === 'approved' || !me.status)) {
+      const myTotalScore = (me.points || 0) + (me.exp || 0);
+      
+      // 🌟 FIX: Count how many people have a combined score greater than me
       const betterCount = await User.countDocuments({
         ...baseQuery,
-        points: { $gt: me.points || 0 },
+        $expr: {
+          $gt: [
+            { $add: [{ $ifNull: ['$points', 0] }, { $ifNull: ['$exp', 0] }] },
+            myTotalScore
+          ]
+        }
       });
       currentUserRank = betterCount + 1;
     }
@@ -127,11 +144,23 @@ router.get('/top', authMiddleware, async (req, res) => {
       baseQuery.classLevel = me.classLevel;
     }
 
-    const users = await User.find(baseQuery)
-      .select('name avatar points level badges quizScores role')
-      .sort({ points: -1, updatedAt: -1 })
-      .limit(limitNum)
-      .lean();
+    // 🌟 FIX: Aggregation pipeline for the Top 5 widget too
+    const users = await User.aggregate([
+      { $match: baseQuery },
+      { 
+        $addFields: {
+          totalScore: { 
+            $add: [
+              { $ifNull: ['$points', 0] }, 
+              { $ifNull: ['$exp', 0] }
+            ] 
+          }
+        }
+      },
+      { $sort: { totalScore: -1, updatedAt: -1 } },
+      { $limit: limitNum },
+      { $project: { name: 1, avatar: 1, points: 1, exp: 1, totalScore: 1, level: 1, badges: 1, quizScores: 1, role: 1 } }
+    ]);
 
     res.json({
       success: true,
@@ -140,7 +169,7 @@ router.get('/top', authMiddleware, async (req, res) => {
           id:      u._id,
           name:    u.name,
           avatar:  u.avatar || '👤',
-          points:  u.points || 0,
+          points:  u.totalScore, // 🌟 Send back combined totalScore
           level:   u.level  || 'Beginner',
           role:    u.role,
           badges:  countUniqueBadges(u.badges),
@@ -159,8 +188,6 @@ router.get('/top', authMiddleware, async (req, res) => {
 });
 
 // ── Helper: average quiz percentage from quizScores array ────────────────────
-// quizScores is [{ quizId, score, total, percentage, date }]
-// Returns rounded integer or null if no scores
 function calcAvgQuiz(quizScores) {
   if (!Array.isArray(quizScores) || quizScores.length === 0) return null;
   const valid = quizScores.filter(q => typeof q.percentage === 'number');
