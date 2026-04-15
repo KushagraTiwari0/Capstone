@@ -3,10 +3,15 @@ import nodemailer from 'nodemailer';
 // Create transporter for Gmail
 const createTransporter = () => {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Must be false for port 587
     auth: {
       user: 'maths99op@gmail.com',
-      pass: process.env.EMAIL_PASSWORD || '' // You'll need to set this in .env file
+      pass: process.env.EMAIL_PASSWORD || '' 
+    },
+    tls: {
+      rejectUnauthorized: false // Helps prevent connection drops on some cloud providers
     }
   });
 };
