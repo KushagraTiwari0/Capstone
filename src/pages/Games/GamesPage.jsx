@@ -5,12 +5,34 @@ import RecycleSorter  from "./games/RecycleSorter";
 import EcoPuzzle      from "./games/EcoPuzzle";
 import WaterSaver     from "./games/WaterSaver";
 import EcoMatchPairs  from "./games/EcoMatchPairs";
+import EcoBubbleBurst from "./games/EcoBubbleBurst";
+import EcoStoryQuest from "./games/EcoStoryQuest";
 
 const GAMES = [
   { id: "recycle", title: "Recycle Sorter", desc: "Drag & drop waste into the correct recycling bin before time runs out!", icon: "♻️", color: "from-green-400 to-emerald-600", tag: "Drag & Drop", difficulty: "Easy", component: RecycleSorter },
   { id: "puzzle", title: "Eco Sliding Puzzle", desc: "Slide eco-themed tiles to solve the puzzle and reveal the picture!", icon: "🧩", color: "from-blue-400 to-indigo-500", tag: "Puzzle", difficulty: "Hard", component: EcoPuzzle },
   { id: "water", title: "Water Pipe Puzzle", desc: "Rotate pipes to connect the water source to the thirsty plant!", icon: "💧", color: "from-sky-400 to-blue-600", tag: "Logic", difficulty: "Medium", component: WaterSaver },
   { id: "match", title: "Eco Memory Match", desc: "Flip cards to find matching eco pairs. Train your memory and learn!", icon: "🌿", color: "from-teal-400 to-green-600", tag: "Memory", difficulty: "Easy", component: EcoMatchPairs },
+  { 
+    id: "bubbles", 
+    title: "Eco Bubble Burst", 
+    desc: "Pop the correct eco-friendly words before they float away! Watch out for the wrong ones.", 
+    icon: "🫧", 
+    color: "from-cyan-400 to-blue-600", 
+    tag: "Action", 
+    difficulty: "Medium", 
+    component: EcoBubbleBurst 
+  },
+  { 
+    id: "story", 
+    title: "Eco Story Quest", 
+    desc: "Guide our hero through an interactive story. Every decision you make impacts the environment!", 
+    icon: "📖", 
+    color: "from-green-500 to-emerald-700", 
+    tag: "Adventure", 
+    difficulty: "Medium", 
+    component: EcoStoryQuest 
+  },
 ];
 
 const DIFF_COLOR = {
