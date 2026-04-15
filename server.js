@@ -36,7 +36,7 @@ app.use(cors({
     // In production or if CORS_ORIGIN is set, use specific origins
     const allowedOrigins = process.env.CORS_ORIGIN 
       ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-      : ['http://localhost:5173', 'http://localhost:5174','https://capstone-kfwu.onrender.com/'];
+      : ['http://localhost:5173', 'http://localhost:5174','https://capstone-kfwu.onrender.com/','https://capstone-gray-alpha.vercel.app'];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
