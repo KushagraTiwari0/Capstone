@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="ecoGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#43A047" />
+      <stop offset="100%" stop-color="#1B5E20" />
+    </linearGradient>
+  </defs>
+  <path d="M10,90 C10,90 10,40 50,10 C90,10 90,50 90,50 C90,90 50,90 10,90 Z" fill="url(#ecoGrad)" />
+  <path d="M15,85 C40,70 50,50 85,15" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
