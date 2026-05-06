@@ -3,13 +3,11 @@ import { useUser } from "./context/UserContext"; // Adjust path if necessary
 
 // --- Page Imports ---
 import App from "./App";
-import LandingPage from "./pages/Landing/Landingpage ";
+import LandingPage from "./pages/Landing/Landingpage";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import LessonList from "./pages/Learning/LessonList";
 import LessonDetail from "./pages/Learning/LessonDetail";
-import QuizPage from "./pages/Quiz/QuizPage";
-import QuizSummary from "./pages/Quiz/QuizSummary";
 import TaskList from "./pages/Tasks/TaskList";
 import TaskSubmit from "./pages/Tasks/TaskSubmit";
 import Badges from "./pages/Rewards/Badges";
@@ -76,8 +74,7 @@ export const router = createBrowserRouter(
           children: [
             { path: "lessons", element: <LessonList /> },
             { path: "lessons/:id", element: <LessonDetail /> },
-            { path: "quiz/:id", element: <QuizPage /> },
-            { path: "quiz/:id/summary", element: <QuizSummary /> },
+            
             { path: "tasks", element: <TaskList /> },
             { path: "tasks/:id/submit", element: <TaskSubmit /> },
             { path: "badges", element: <Badges /> },
