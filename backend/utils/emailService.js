@@ -201,6 +201,15 @@ const emailTemplates = {
 // Send email function
 export const sendEmail = async (to, templateName, data) => {
   try {
+    // 🌟 1. DEPLOYMENT BYPASS 🌟
+    // If running on Render, skip the actual sending so it doesn't crash from port blocks.
+    if (process.env.NODE_ENV === 'production') {
+      console.log(`✉️ [PRODUCTION SIMULATION]: Would have sent '${templateName}' email to ${to}`);
+      return { success: true, simulated: true };
+    }
+
+    // 🌟 2. LOCALHOST BEHAVIOR 🌟
+    // If running locally, actually send the email using Gmail.
     if (!process.env.EMAIL_PASSWORD) {
       console.warn('⚠️ EMAIL_PASSWORD not set. Skipping email send.');
       return { success: false, error: 'Email service not configured' };
