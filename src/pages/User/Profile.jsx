@@ -130,7 +130,18 @@ const Profile = () => {
   const nextLevel    = nextLevelInfo(totalPts);
   const ptsToNext    = nextLevel ? nextLevel.min - totalPts : 0;
   const levelPct     = nextLevel ? Math.min(100, Math.round(((totalPts - levelInfo.min) / (nextLevel.min - levelInfo.min)) * 100)) : 100;
-  const earnedBadges = p.badges?.filter(b => b.earned || b.badgeId) || [];
+  const getUniqueBadges = (badges) => {
+    if (!badges) return [];
+    const seen = new Set();
+    return badges.filter(b => {
+      const id = (b.badgeId?._id || b.badgeId || b._id || b.id)?.toString();
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  };
+
+  const earnedBadges = getUniqueBadges(p.badges);
   const totalLessons = p.completedLessons?.length || 0;
   const totalTasks   = p.completedTasks?.length   || 0;
   const quizArr      = Object.values(p.quizScores || {});

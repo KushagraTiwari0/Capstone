@@ -43,6 +43,9 @@ export const checkAndAwardBadges = async (userId) => {
       if (meetsPoints && meetsLessons && meetsTasks) {
         // Award badge
         user.badges.push({ badgeId: badge._id, earnedAt: new Date() });
+        // Add to the local set to prevent duplicate awarding in the same call (if logic allows)
+        earnedBadgeIds.add(badge._id.toString());
+        
         // Add badge bonus points
         if (badge.points > 0) {
           user.points = (user.points || 0) + badge.points;
