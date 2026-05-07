@@ -82,14 +82,39 @@ const LessonDetail = () => {
     setQuizAnswers(prev => ({ ...prev, [questionIdx]: answerIdx }));
   };
 
-  const handleQuizSubmit = () => {
+  const handleQuizSubmit = async () => {
     if (!lesson?.quiz) return;
     let correct = 0;
+    const total = lesson.quiz.length;
+    
     lesson.quiz.forEach((q, idx) => {
       if (quizAnswers[idx] === q.correctAnswer) correct++;
     });
+    
+    const percentage = Math.round((correct / total) * 100);
     setQuizScore(correct);
     setQuizSubmitted(true);
+
+    // ✅ PERSIST SCORE TO BACKEND
+    try {
+      const token = localStorage.getItem('geep_token');
+      await fetch(`${API_BASE}/users/me/quiz-score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          quizId: lesson._id, // Using lesson ID as quiz ID
+          score: correct,
+          total: total,
+          percentage: percentage,
+          quizData: { points: 0 } // You can adjust if you want to award bonus points for quizzes
+        })
+      });
+    } catch (err) {
+      console.error('Failed to save quiz score:', err);
+    }
   };
 
   // Loading
