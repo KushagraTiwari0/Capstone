@@ -142,7 +142,8 @@ const AdminDashboard = () => {
     }
   };
 
-  const classLevels = ["All", ...new Set(lessons.map((l) => l.classLevel).sort())];
+  const uniqueLevels = [...new Set(lessons.map((l) => Number(l.classLevel)))].sort((a, b) => a - b);
+  const classLevels = ["All", ...uniqueLevels];
   const filteredLessons =
     filterClass === "All" ? lessons : lessons.filter((l) => String(l.classLevel) === String(filterClass));
 
